@@ -8,7 +8,7 @@ import psutil
 import requests
 import json
 import os
-from modules.run_revamp import MAIN
+from modules.run import MAIN
 
 if __name__ == '__main__':
     class PARSER:
@@ -70,7 +70,7 @@ if __name__ == '__main__':
                 'Assembly': ['--assembly', '-a', 'Path to assembly file (FASTA)'],
                 'Left Reads': ['--left', '-l', 'Path to left reads file (FASTQ)'],
                 'Right Reads': ['--right', '-r', 'Path to right reads file (FASTQ)'],
-                'Reference': ['--reference', '-r', 'Path to reference file (FASTA)'],
+                'Reference': ['--reference', '-f', 'Path to reference file (FASTA)'],
                 'Output Directory': ['--outdir', '-o', 'Path to output directory'],
                 'Threads': ['--threads', '-t', 'Number of threads to use'],
                 'STAR': ['--STAR', '-s', 'Use STAR aligner'],

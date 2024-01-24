@@ -236,11 +236,9 @@ class RECIP:
             existing_df = pd.read_csv(self.assemblycsv)
             merged_df = pd.concat([existing_df, df], axis=1)
             merged_df.to_csv(self.assemblycsv, index=False)
-
+        
     #### COMPARITIVE METRICS ####
     
-    # we12easdssss # Code contribution from cat, could not get it to work.
-
     def reference_hits(self):
         for name, contig in self.target_results.items():
             self.reference.setdefault(name, {'hits': [], 'crbb': False, 'prot': self.target_results[name]['prot'], 'seq': self.target_results[name]['seq']})
@@ -404,22 +402,42 @@ class RECIP:
         blastx   = ['diamond', 'blastx', '--threads', str(self.threads), '-b1', '--db', self.p2q_db, '--out', self.q2p_blast, '--query', self.fasta_f, '--evalue', '0.00001', '--max-target-seqs', '50', '--masking', '0', '--ultra-sensitive', '--outfmt', '6', 'qseqid', 'sseqid', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']
         blastp   = ['diamond', 'blastp', '--threads', str(self.threads), '-b1', '--db', self.q2p_db, '--out', self.p2q_blast, '--query', self.prot_f, '--evalue', '0.00001', '--max-target-seqs', '50', '--masking', '0', '--ultra-sensitive', '--outfmt', '6', 'qseqid', 'sseqid', 'pident', 'length', 'mismatch', 'gapopen', 'qstart', 'qend', 'sstart', 'send', 'evalue', 'bitscore', 'qlen', 'slen']
 
+        with open(f'{self.output}/make_prot_db.log', 'w') as f:
+            make_prot_db = subprocess.Popen(prot_db, stdout=f, stderr=f, preexec_fn=os.setsid)
+            make_prot_db_pid = make_prot_db.pid
+            make_prot_db.communicate()
 
-        make_prot_db = subprocess.Popen(prot_db, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        stdout, stderr = make_prot_db.communicate()
-        make_prot_db_pid = make_prot_db.pid
+        with open(f'{self.output}/make_query_db.log', 'w') as f:
+            make_query_db = subprocess.Popen(query_db, stdout=f, stderr=f, preexec_fn=os.setsid)
+            make_query_db_pid = make_query_db.pid
+            make_query_db.communicate()
 
-        make_query_db = subprocess.Popen(query_db, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        stdout, stderr = make_query_db.communicate()
-        make_query_db_pid = make_query_db.pid
+        with open(f'{self.output}/blastx.log', 'w') as f:
+            blastx = subprocess.Popen(blastx, stdout=f, stderr=f, preexec_fn=os.setsid)
+            blastx_pid = blastx.pid
+            blastx.communicate()
 
-        blastx = subprocess.Popen(blastx, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        stdout, stderr = blastx.communicate()
-        blastx_pid = blastx.pid
+        with open(f'{self.output}/blastp.log', 'w') as f:
+            blastp = subprocess.Popen(blastp, stdout=f, stderr=f, preexec_fn=os.setsid)
+            blastp_pid = blastp.pid
+            blastp.communicate()
 
-        blastp = subprocess.Popen(blastp, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        stdout, stderr = blastp.communicate()
-        blastp_pid = blastp.pid
+        # make_prot_db = subprocess.Popen(prot_db, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+        # stdout, stderr = make_prot_db.communicate()
+        # make_prot_db_pid = make_prot_db.pid
+        
+
+        # make_query_db = subprocess.Popen(query_db, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+        # stdout, stderr = make_query_db.communicate()
+        # make_query_db_pid = make_query_db.pid
+
+        # blastx = subprocess.Popen(blastx, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+        # stdout, stderr = blastx.communicate()
+        # blastx_pid = blastx.pid
+
+        # blastp = subprocess.Popen(blastp, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
+        # stdout, stderr = blastp.communicate()
+        # blastp_pid = blastp.pid
 
 def reference(faf, pf, assemlbycsv, output, threads):
     recip = RECIP()
