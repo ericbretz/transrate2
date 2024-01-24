@@ -27,6 +27,3 @@ $ apt install rna-star
 $ apt install samtools
 ```
 <b>Diamond</b>&emsp;&emsp;&emsp;https://github.com/bbuchfink/diamond
-```
-$ apt install diamond-aligner
-```
