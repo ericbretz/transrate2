@@ -308,6 +308,9 @@ class MAIN:
 
         functions = [file.file, frag.frag, seq.seq, good.good, base.base, sgmt.sgmt]
         
+        sys.stdout = open(os.path.join(self.LOGDIR, 'transrate.log'), 'w')
+        sys.stderr = open(os.path.join(self.LOGDIR, 'transrate.log'), 'w')
+
         for func in functions:
             self.RSTAGE = func.__name__.lower()
             self.DESC[func.__name__.lower()].append(time.perf_counter()) 
@@ -318,6 +321,9 @@ class MAIN:
             self.log_time(func.__name__, 'end')
             self.RSTAGEDONE = True
  
+        sys.stdout = sys.__stdout__
+        sys.stderr = sys.__stderr__
+        
         self.log_time('transrate', 'end')
         self.STAGEDONE = True
 
