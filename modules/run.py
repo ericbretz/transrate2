@@ -121,8 +121,12 @@ class MAIN:
                                 with open(self.GOODFA, 'a') as good_f:
                                     good_f.write(''.join(goodseq))
                                 break
-                            goodseq.append(next(assembly_f))
-                
+                            try:
+                                goodseq.append(next(assembly_f))
+                            except:
+                                with open(self.GOODFA, 'a') as good_f:
+                                    good_f.write(''.join(goodseq))
+                                break
 
     def path_cleanup(self, path):
         clean_path = os.path.basename(path)
