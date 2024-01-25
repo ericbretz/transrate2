@@ -104,11 +104,6 @@ class MAIN:
 
         for k,v in self.RDCT.items():
             try:
-                if v['good']['goodlst'] != []:
-                    print(v['good']['goodlst'])
-            except:
-                pass
-            try:
                 for g in v['good']['goodlst']:
                     if g not in goodlst:
                         goodlst.append(g)
@@ -119,11 +114,11 @@ class MAIN:
             for line in assembly_f:
                 if line.startswith('>'):
                     if line.strip('>').strip('\n') in goodlst:
+                        goodseq = [line]
+                    else:
                         with open(self.GOODFA, 'a') as good_f:
                             for g in goodseq:
                                 good_f.write(g)
-                        goodseq = [line]
-                    else:
                         goodseq = []
                 else:
                     goodseq.append(line)
