@@ -115,13 +115,10 @@ class MAIN:
                 if line.startswith('>'):
                     if line.strip('>').strip('\n') in goodlst:
                         goodseq = [line]
-                    else:
-                        with open(self.GOODFA, 'a') as good_f:
-                            for g in goodseq:
-                                good_f.write(g)
-                        goodseq = []
-                else:
-                    goodseq.append(line)
+                        while True:
+                            if line.startswith('>'):
+                                break
+                            goodseq.append(next(assembly_f))
                 
 
     def path_cleanup(self, path):
