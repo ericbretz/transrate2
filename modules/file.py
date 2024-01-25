@@ -28,6 +28,7 @@ def file(bamfile, bamdct, threads):
                     'mean'          : 0.0,
                     'sd'            : 0.0,
                     'realistic'     : 0.0,
+                    'goodlst'       : [],
                 },
                 'coverage': {
                     'ranges_init'   : [],

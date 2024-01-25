@@ -10,7 +10,7 @@ def process_task(args):
     realistic_distance = args[3]
     bam = pysam.AlignmentFile(bamfile, 'rb')
     refs = bam.references[split::threads]
-    tmp_dct = {ref: {'stats': {'good': 0}} for ref in refs}
+    tmp_dct = {ref: {'stats': {'good': 0}, 'good' : {'goodlst' : []}} for ref in refs}
 
     for ref in refs:
         for fetch in bam.fetch(reference=ref):
@@ -38,11 +38,15 @@ def process_task(args):
 
                 if fetch.reference_start < fetch.next_reference_start:
                     tmp_dct[name_r]['stats']['good'] += 1
+                    if fetch.reference_name not in tmp_dct[name_r]['goodlst']:
+                        tmp_dct[name_r]['good']['goodlst'].append(fetch.reference_name)
 
             elif is_reversed and not is_mate_reversed:
 
                 if fetch.next_reference_start < fetch.reference_start:
                     tmp_dct[name_r]['stats']['good'] += 1
+                    if fetch.reference_name not in tmp_dct[name_r]['goodlst']:
+                        tmp_dct[name_r]['good']['goodlst'].append(fetch.reference_name)
                     
     return tmp_dct
 

@@ -14,6 +14,8 @@ if __name__ == '__main__':
     class PARSER:
         def __init__(self):
             self.color = ''
+            self.assemblycount = 0
+            self.clean = {}
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate/releases'
                 header = {'Accept': 'application/vnd.github+json'}
@@ -138,6 +140,10 @@ if __name__ == '__main__':
                 print(topbar)
                 for k,v in args.__dict__.items():
                     if v:
+                        if k == 'assembly':
+                            v = v.strip(' ').split(',')
+                            v = v[self.assemblycount]
+                            self.assemblycount += 1
                         xlen = 74 - len(str(k)) - 40
                         x = ' ' * xlen
                         y = 64 - len(str(v)[-30:]) - 25
@@ -145,6 +151,7 @@ if __name__ == '__main__':
                             v = f'...{str(v)[-27:]}'
                         line =  f'{self.color}  │\033[m {k.capitalize()}{x}{str(v)[-30:]}{self.color}{" "*y}│\033[m'
                         print(line)
+                        
                 print(bottombar)
                 print('')
 
@@ -154,20 +161,30 @@ if __name__ == '__main__':
 
             elif len(sys.argv) != 1:
 
-                transrate_start           = MAIN()
-                transrate_start.TERM      = get_term(self)
-                transrate_start.BASE      = os.path.basename(args.assembly).split('.')[0]
-                transrate_start.ASSEMBLY  = args.assembly if args.assembly else ''
-                transrate_start.LEFT      = args.left if args.left else ''
-                transrate_start.RIGHT     = args.right if args.right else ''
-                transrate_start.REFERENCE = args.reference if args.reference else ''
-                transrate_start.THREADS   = args.threads if args.threads else 1
-                transrate_start.OUTDIR    = args.output if args.output else ''
-                transrate_start.CLUTTER   = args.clutter if args.clutter else False
-                transrate_start.STAR      = args.STAR if args.STAR else False
-                parameters()
-                transrate_start.LOGOCOLOR = self.color
-                transrate_start.run()
+
+                transrate_start              = MAIN()
+                transrate_start.TERM         = get_term(self)
+                transrate_start.ASSEMBLYLIST = str(args.assembly).strip(' ').split(',') if args.assembly else ''
+                self.clean                   = transrate_start.__dict__
+
+                for x in transrate_start.ASSEMBLYLIST:
+                    transrate_start.__dict__  = self.clean
+                    transrate_start.FINISHED  = False
+                    transrate_start.ASSEMBLY  = x
+                    transrate_start.BASE      = os.path.basename(transrate_start.ASSEMBLY).split('.')[0]
+                    transrate_start.LEFT      = args.left if args.left else ''
+                    transrate_start.RIGHT     = args.right if args.right else ''
+                    transrate_start.REFERENCE = args.reference if args.reference else ''
+                    transrate_start.THREADS   = args.threads if args.threads else 1
+                    transrate_start.OUTDIR    = args.output if args.output else ''
+                    transrate_start.CLUTTER   = args.clutter if args.clutter else False
+                    transrate_start.STAR      = args.STAR if args.STAR else False
+                    transrate_start.LOGOCOLOR = self.color
+                    parameters()
+                    transrate_start.run()
+                    while not transrate_start.FINISHED:
+                        pass
+                    time.sleep(1)
             else:
                 self.helpoptions()
                 sys.exit()

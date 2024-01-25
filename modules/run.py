@@ -12,6 +12,7 @@ warnings.filterwarnings('ignore')
 class MAIN:
     def __init__(self):
         #### Parameters ####
+        self.ASSEMBLYLIST = []
         self.ASSEMBLY   = ''
         self.LEFT       = ''
         self.RIGHT      = ''
@@ -38,6 +39,7 @@ class MAIN:
         self.SNAPCOUNT  = ''
         self.CSVOUT     = ''
         self.ASSEMBLIES = ''
+        self.GOODFA     = ''
 
         #### Logging ####
         self.RUNTIME    = time.strftime('%Y%m%d%H%M%S')
@@ -67,6 +69,7 @@ class MAIN:
         self.STDERR     = ''
         self.PGID       = 0
 
+        #### Output ####
         self.STAGE     = ''
         self.RSTAGE    = ''
         self.STAGEDONE = False
@@ -91,6 +94,35 @@ class MAIN:
                 'base': ['• Locating uncovered bases'], 
                 'sgmt': ['• Calculating segmentation'],
                 }
+        
+    def good_fa(self):
+        goodlst = []
+        goodseq = []
+
+        with open(self.GOODFA, 'w') as good_f:
+            good_f.write('')
+
+        for k,v in self.RDCT.items():
+            try:
+                for g in v['good'][goodlst]:
+                    if g not in goodlst:
+                        goodlst.append(g)
+            except:
+                pass
+        
+        with open(self.ASSEMBLY, 'r') as assembly_f:
+            for line in assembly_f:
+                if line.startswith('>'):
+                    if line.strip('>').strip('\n') in goodlst:
+                        with open(self.GOODFA, 'a') as good_f:
+                            for g in goodlst:
+                                good_f.write(g)
+                        goodseq = [line]
+                    else:
+                        goodseq = []
+                else:
+                    goodseq.append(line)
+                
 
     def path_cleanup(self, path):
         clean_path = os.path.basename(path)
@@ -136,6 +168,7 @@ class MAIN:
             self.SNAPCOUNT  = os.path.join(self.RDIR, 'snapcount.txt')
         self.CSVOUT     = os.path.join(self.RDIR, 'transrate.csv')
         self.ASSEMBLIES = os.path.join(self.OUTDIR, 'assemblies.csv')
+        self.GOODFA     = os.path.join(self.RDIR, 'good.', self.BASE, '.fa')
     
     def log_time(self, process, type):
         if type == 'start':
@@ -343,6 +376,7 @@ class MAIN:
 
 
     def run(self):
+        # self.ASSEMBLY = assembly
         self.dir_set()
         self.BASE = os.path.basename(self.ASSEMBLY).split('.')[0]
         outputthread = threading.Thread(target=self.output)
@@ -362,6 +396,7 @@ class MAIN:
             self.transrate()
             self.csv()
             self.assembly()
+            self.good_fa()
         else:
             self.path_check()
             outputthread.start()
@@ -384,9 +419,10 @@ class MAIN:
                 if file not in savefiles and 'logs' not in root:
                     os.remove(os.path.join(root, file))
             for dir in dirs:
-                if dir in delfolders:
+                if dir in delfolders or os.path.getsize(os.path.join(root, dir)) == 64:
                     shutil.rmtree(os.path.join(root, dir))
 
+                
     def output_make(self):
         if not os.path.exists(self.OUTDIR) and self.OUTDIR != '':
             os.makedirs(self.OUTDIR)
