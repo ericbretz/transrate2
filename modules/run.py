@@ -168,7 +168,7 @@ class MAIN:
             self.SNAPCOUNT  = os.path.join(self.RDIR, 'snapcount.txt')
         self.CSVOUT     = os.path.join(self.RDIR, 'transrate.csv')
         self.ASSEMBLIES = os.path.join(self.OUTDIR, 'assemblies.csv')
-        self.GOODFA     = os.path.join(self.RDIR, 'good.', self.BASE, '.fa')
+        self.GOODFA     = os.path.join(self.RDIR, f'good.{self.BASE}.fa')
     
     def log_time(self, process, type):
         if type == 'start':
