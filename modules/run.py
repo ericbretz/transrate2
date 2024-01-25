@@ -117,6 +117,8 @@ class MAIN:
                         goodseq = [line]
                         while True:
                             if line.startswith('>'):
+                                with open(self.GOODFA, 'a') as good_f:
+                                    good_f.write(''.join(goodseq))
                                 break
                             goodseq.append(next(assembly_f))
                 
