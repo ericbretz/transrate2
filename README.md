@@ -1,7 +1,7 @@
 <p align="center">
 <picture><img src="https://i.imgur.com/ksFvFqp.png"
-     alt="Transrate 2.0.0"/><br></picture>
-<b>Version 2.0.0</b><br>
+     alt="Transrate 2.0.1"/><br></picture>
+<b>Version 2.0.1</b><br>
 Quality analysis for de-novo transcriptome assemblies</p>
 
 ## Usage/Examples
