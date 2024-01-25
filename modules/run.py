@@ -121,6 +121,7 @@ class MAIN:
                                     good_f.write(''.join(goodseq))
                                 break
                             goodseq.append(next(assembly_f))
+                            print(goodseq)
                 
 
     def path_cleanup(self, path):
