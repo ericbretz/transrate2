@@ -125,7 +125,7 @@ class MAIN:
                                 try:
                                     goodseq.append(next(assembly_f))
                                 except:
-                                    pass
+                                    break
             with open(self.GOODFA, 'a') as good_f:
                 good_f.write(''.join(goodseq))
 
