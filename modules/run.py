@@ -104,6 +104,10 @@ class MAIN:
 
         for k,v in self.RDCT.items():
             try:
+                print(v['good']['goodlst'])
+            except:
+                print(v)
+            try:
                 for g in v['good']['goodlst']:
                     if g not in goodlst:
                         goodlst.append(g)
