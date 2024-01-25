@@ -112,21 +112,20 @@ class MAIN:
         
         with open(self.ASSEMBLY, 'r') as assembly_f:
             for line in assembly_f:
-                if line.startswith('>'):
-                    if line.strip('>').strip('\n') in goodlst:
-                        goodseq = [line]
-                        line = next(assembly_f)
-                        while True:
-                            if line.startswith('>'):
-                                with open(self.GOODFA, 'a') as good_f:
-                                    good_f.write(''.join(goodseq))
-                                goodseq = []
-                                break
-                            try:
-                                line = next(assembly_f)
-                                goodseq.append(line)
-                            except:
-                                break
+                if line.strip('>').strip('\n') in goodlst:
+                    goodseq = [line]
+                    line = next(assembly_f)
+                    while True:
+                        if line.startswith('>'):
+                            with open(self.GOODFA, 'a') as good_f:
+                                good_f.write(''.join(goodseq))
+                            goodseq = []
+                            break
+                        try:
+                            line = next(assembly_f)
+                            goodseq.append(line)
+                        except:
+                            break
                              
             with open(self.GOODFA, 'a') as good_f:
                 good_f.write(''.join(goodseq))
