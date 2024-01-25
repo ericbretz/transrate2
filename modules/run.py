@@ -116,6 +116,7 @@ class MAIN:
                     if line.strip('>').strip('\n') in goodlst:
                         goodseq = [line]
                         while True:
+                            line = next(assembly_f)
                             if line.startswith('>'):
                                 with open(self.GOODFA, 'a') as good_f:
                                     good_f.write(''.join(goodseq))
