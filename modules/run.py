@@ -121,6 +121,7 @@ class MAIN:
                                 with open(self.GOODFA, 'a') as good_f:
                                     good_f.write(''.join(goodseq))
                                 break
+                            next(assembly_f)
 
                              
             with open(self.GOODFA, 'a') as good_f:
