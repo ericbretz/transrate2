@@ -121,13 +121,7 @@ class MAIN:
                                 with open(self.GOODFA, 'a') as good_f:
                                     good_f.write(''.join(goodseq))
                                 break
-                            l = next(assembly_f, None)
-                            if l is not None:
-                                goodseq.append(line)
-                            else:
-                                with open(self.GOODFA, 'a') as good_f:
-                                    good_f.write(''.join(goodseq))
-                                break
+
                              
             with open(self.GOODFA, 'a') as good_f:
                 good_f.write(''.join(goodseq))
