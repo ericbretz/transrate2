@@ -120,9 +120,11 @@ class MAIN:
                             if line.startswith('>'):
                                 with open(self.GOODFA, 'a') as good_f:
                                     good_f.write(''.join(goodseq))
+                                goodseq = []
                                 break
                             try:
                                 line = next(assembly_f)
+                                goodseq.append(line)
                             except:
                                 break
                              
