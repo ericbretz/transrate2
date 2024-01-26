@@ -5,9 +5,11 @@ y = str(date_time.year)
 
 __major__ = 2
 __minor__ = 0
-__patch__ = 4
+__patch__ = 3
+__dev__   = True
+__devV__  = 1
 __script_name__ = 'Transrate2'
-__version__ = f'{__major__}.{__minor__}.{__patch__}'
+__version__ = f'{__major__}.{__minor__}.{__patch__}' if not __dev__ else f'{__major__}.{__minor__}.{__patch__}.DEV-{__devV__}'
 __description__ = ('Quality analysis for de-novo transcriptome assemblies')
 __author__ = 'Eric C. Bretz'
 __author_email__ = 'ebretz2@uic.edu'

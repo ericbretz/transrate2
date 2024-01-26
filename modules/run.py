@@ -222,11 +222,15 @@ class MAIN:
         self.log_set('star')
         self.STAGE = 'STAR'
         self.SNAPCOUNT = os.path.join(self.STARDIR, self.BASE + '_Log.final.out')
-        reads = self.SINGLE if self.SINGLE else f'{self.LEFT} {self.RIGHT}'
+        reads = self.SINGLE if self.SINGLE else [self.LEFT, self.RIGHT]
         if self.LEFT.endswith('.gz') or self.RIGHT.endswith('.gz'):
-            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn', f'{reads}', '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--readFilesCommand', 'gunzip', '-c', '--outSAMtype BAM Unsorted']
+            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn'] 
+            star_cmd.extend(reads)
+            star_cmd.extend([ '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--readFilesCommand', 'gunzip', '-c', '--outSAMtype BAM Unsorted'])
         else:
-            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn', f'{reads}', '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--outSAMtype BAM Unsorted']
+            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn']
+            star_cmd.extend(reads)
+            star_cmd.extend(['--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--outSAMtype BAM Unsorted'])
         star_run = subprocess.Popen(star_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
         stdout, stderr = star_run.communicate()
         returncode = star_run.returncode
