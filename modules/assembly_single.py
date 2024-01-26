@@ -8,7 +8,7 @@ def assembly_single(r_csv, fa_file, snapf, outdir, star, multi):
         'median_len', 'std_len', 'n_under_200', 'n_over_1k', 'n_over_10k', 'n_with_orf',
         'mean_orf_percent', 'n90', 'n70', 'n50', 'n30', 'n10', 'gc', 'bases_n',
         'proportion_n', 'fragments', 'fragments_mapped', 'p_fragments_mapped',
-        'potential_bridges', 'bases_uncovered', 'p_bases_uncovered', 'contigs_uncovbase',
+        'bases_uncovered', 'p_bases_uncovered', 'contigs_uncovbase',
         'p_contigs_uncovbase', 'contigs_uncovered', 'p_contigs_uncovered',
         'contigs_lowcovered', 'p_contigs_lowcovered']
     
@@ -208,7 +208,7 @@ def assembly_single(r_csv, fa_file, snapf, outdir, star, multi):
     # good_mappings        = tc['good'].sum()
     # p_good_mappings      = round(good_mappings / fragments, 2)
     # bad_mappings         = round(fragments_mapped - good_mappings, 2)
-    potential_bridges    = (tc['bridges'] > 0).sum()
+    # potential_bridges    = (tc['bridges'] > 0).sum()
     bases_uncovered      = tc['basesuncovered'].sum()
     p_bases_uncovered    = round(bases_uncovered / bases, 2)
     p_contigs_uncovered  = round(contigs_uncovered / tc.shape[0], 2)
@@ -306,7 +306,7 @@ def assembly_single(r_csv, fa_file, snapf, outdir, star, multi):
     # output_df.loc[0, 'good_mappings']        = good_mappings
     # output_df.loc[0, 'p_good_mapping']       = p_good_mappings
     # output_df.loc[0, 'bad_mappings']         = bad_mappings
-    output_df.loc[0, 'potential_bridges']    = potential_bridges
+    # output_df.loc[0, 'potential_bridges']    = potential_bridges
     output_df.loc[0, 'bases_uncovered']      = bases_uncovered
     output_df.loc[0, 'p_bases_uncovered']    = p_bases_uncovered
     output_df.loc[0, 'contigs_uncovbase']    = contig_uncovbase

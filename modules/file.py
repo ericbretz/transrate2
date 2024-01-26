@@ -37,6 +37,24 @@ def file(bamfile, bamdct, threads, single):
                     'bases'         : [],
                     'length'        : 0,
                     'covered'       : [0] * bam.get_reference_length(ref)
+                }} if not single else {'stats': {
+                    'name'          : ref,
+                    'p_seqtrue'     : 0.0,
+                    'length'        : bam.get_reference_length(ref),
+                    'fragments'     : 0,
+                    'basesuncovered': 0,
+                },
+                'seq': {
+                    'true'          : 0,
+                    'count'         : 0
+                },
+                'coverage': {
+                    'ranges_init'   : [],
+                    'ranges_fnl'    : [],
+                    'bases_count'   : 0,
+                    'bases'         : [],
+                    'length'        : 0,
+                    'covered'       : [0] * bam.get_reference_length(ref)
                 }
             }
     return bamdct    

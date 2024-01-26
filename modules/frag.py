@@ -15,15 +15,21 @@ def process_task(args):
         for fetch in bam.fetch(reference=ref):
             try:
                 name_r = fetch.reference_name
-                if (fetch.is_read1 and fetch.is_mapped) or (fetch.is_read2 and not fetch.mate_is_mapped):
-                    tmp_dct[name_r]['stats']['fragments'] += 1
-                if fetch.is_read1 and fetch.is_paired and not single:
-                    if fetch.is_proper_pair:
-                        tmp_dct[name_r]['stats']['properpair'] += 1
-                if fetch.is_read1 and fetch.is_mapped and fetch.mate_is_mapped and not single:
-                    tmp_dct[name_r]['stats']['both_mapped'] += 1
-                if fetch.reference_id != fetch.next_reference_id and fetch.is_read1:
-                    tmp_dct[name_r]['stats']['bridges'] += 1
+                if not single:
+                    if (fetch.is_read1 and fetch.is_mapped) or (fetch.is_read2 and not fetch.mate_is_mapped):
+                        tmp_dct[name_r]['stats']['fragments'] += 1
+                    if fetch.is_read1 and fetch.is_paired:
+                        if fetch.is_proper_pair:
+                            tmp_dct[name_r]['stats']['properpair'] += 1
+                    if fetch.is_read1 and fetch.is_mapped and fetch.mate_is_mapped:
+                        tmp_dct[name_r]['stats']['both_mapped'] += 1
+                    if fetch.reference_id != fetch.next_reference_id and fetch.is_read1:
+                        tmp_dct[name_r]['stats']['bridges'] += 1
+                else:
+                    if fetch.is_mapped:
+                        tmp_dct[name_r]['stats']['fragments'] += 1
+                    # if fetch.reference_id != fetch.next_reference_id:
+                    #     tmp_dct[name_r]['stats']['bridges'] += 1
             except:
                 continue
 
