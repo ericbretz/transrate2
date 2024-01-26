@@ -259,7 +259,7 @@ class MAIN:
         mode = 'single' if self.SINGLE else 'paired'
         reads = [self.SINGLE] if self.SINGLE else [self.LEFT, self.RIGHT]
         params = ['-s', '0', '1000', '-H', '300000', '-M', '-mcp', '10000000']
-        params_endcap = '-o', self.BAM, '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-D', '5', '-om', '5', '-omax', '10']
+        params_endcap = ['-o', self.BAM, '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-D', '5', '-om', '5', '-omax', '10']
         snap_cmd        = ['snap-aligner', f'{mode}', self.SNAPINDEX]
         snap_cmd.extend(reads)
         snap_cmd.extend(params_endcap)
