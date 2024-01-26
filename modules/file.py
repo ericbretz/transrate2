@@ -1,7 +1,7 @@
 import pysam
 
 
-def file(bamfile, bamdct, threads):
+def file(bamfile, bamdct, threads, single):
     with pysam.AlignmentFile(bamfile, 'rb') as bam:
         references = bam.references
 

@@ -24,7 +24,7 @@ def process_task(args):
                 continue
     return tmp_dct
 
-def seq(bamfile, bamdct, threads):
+def seq(bamfile, bamdct, threads, single):
 
     with Pool(threads) as p:
         results = p.map(process_task, [[i, bamfile, threads] for i in range(threads)])

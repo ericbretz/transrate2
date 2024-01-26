@@ -4,7 +4,7 @@ import subprocess
 import sys
 import threading
 import pandas as pd
-from modules import file,frag,seq,base,sgmt,good,assembly,assembly_solo,reference
+from modules import file,frag,seq,base,sgmt,good,assembly,assembly_solo,assembly_single,reference
 import warnings
 import shutil
 warnings.filterwarnings('ignore')
@@ -22,6 +22,7 @@ class MAIN:
         self.TERM         = False
         self.STAR         = False
         self.MULTASSEMBLY = False
+        self.SINGLE       = ''
 
         #### Paths ####
         self.OUTDIR     = ''
@@ -221,11 +222,11 @@ class MAIN:
         self.log_set('star')
         self.STAGE = 'STAR'
         self.SNAPCOUNT = os.path.join(self.STARDIR, self.BASE + '_Log.final.out')
-
+        reads = self.SINGLE if self.SINGLE else f'{self.LEFT} {self.RIGHT}'
         if self.LEFT.endswith('.gz') or self.RIGHT.endswith('.gz'):
-            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn', self.LEFT, self.RIGHT, '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--readFilesCommand', 'gunzip', '-c', '--outSAMtype BAM Unsorted']
+            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn', f'{reads}', '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--readFilesCommand', 'gunzip', '-c', '--outSAMtype BAM Unsorted']
         else:
-            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn', self.LEFT, self.RIGHT, '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--outSAMtype BAM Unsorted']
+            star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn', f'{reads}', '--outFileNamePrefix', os.path.join(self.STARDIR, self.BASE + '_'), '--outSAMtype BAM Unsorted']
         star_run = subprocess.Popen(star_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
         stdout, stderr = star_run.communicate()
         returncode = star_run.returncode
@@ -255,8 +256,9 @@ class MAIN:
         self.log_time('snap_paired', 'start')
         self.log_set('snap_paired')
         self.STAGE = 'Snap Paired'
-
-        snap_cmd        = ['snap-aligner', 'paired', self.SNAPINDEX, self.LEFT, self.RIGHT, '-o', self.BAM, '-s', '0', '1000', '-H', '300000', '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-M', '-D', '5', '-om', '5', '-omax', '10', '-mcp', '10000000']
+        mode = 'single' if self.SINGLE else 'paired'
+        reads = self.SINGLE if self.SINGLE else f'{self.LEFT} {self.RIGHT}'
+        snap_cmd        = ['snap-aligner', f'{mode}', self.SNAPINDEX, f'{reads}', '-o', self.BAM, '-s', '0', '1000', '-H', '300000', '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-M', '-D', '5', '-om', '5', '-omax', '10', '-mcp', '10000000']
         snap_run        = subprocess.Popen(snap_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
         stdout, stderr  = snap_run.communicate()
         returncode      = snap_run.returncode
@@ -326,8 +328,7 @@ class MAIN:
             self.DESC[func.__name__.lower()].append(time.perf_counter()) 
             self.log_time(func.__name__, 'start')
             self.log_set(func.__name__)
-            
-            self.RDCT = func(self.SORTEDBAM, self.RDCT, self.THREADS)
+            self.RDCT = func(self.SORTEDBAM, self.RDCT, self.THREADS, bool(self.SINGLE))
             self.log_time(func.__name__, 'end')
             self.RSTAGEDONE = True
  
@@ -374,6 +375,17 @@ class MAIN:
         self.log_time('assembly', 'end')
         self.STAGEDONE = True
 
+    def assembly_single(self):
+        self.log_time('assembly', 'start')
+        self.log_set('assembly')
+        self.STAGE = 'Assembly'
+        self.STARTED = True
+  
+        assembly_single.assembly_single(self.ASSEMBLY, self.OUTDIR, self.MULTASSEMBLY)
+        
+        self.log_time('assembly', 'end')
+        self.STAGEDONE = True
+
     def reference(self):
         self.log_time('reference', 'start')
         self.log_set('reference')
@@ -389,6 +401,9 @@ class MAIN:
         self.REFFINISHED = True
         self.STAGEDONE = True
 
+    def pair_check(self):
+        if bool(self.LEFT) != bool(self.RIGHT):
+            self.SINGLE = self.LEFT if self.LEFT else self.RIGHT
 
     def run(self):
         # self.ASSEMBLY = assembly
@@ -396,8 +411,10 @@ class MAIN:
         self.BASE = os.path.basename(self.ASSEMBLY).split('.')[0]
         outputthread = threading.Thread(target=self.output)
         self.output_make()
-        if self.LEFT and self.RIGHT:
+        
+        if self.LEFT or self.RIGHT:
             self.path_check()
+            self.pair_check()
             outputthread.start()
             if self.STAR:
                 self.star_index()
@@ -410,8 +427,8 @@ class MAIN:
             self.samtools_index()
             self.transrate()
             self.csv()
-            self.assembly()
-            self.good_fa()
+            self.assembly_single() if self.SINGLE else self.assembly()
+            self.good_fa() if not self.SINGLE else None
         else:
             self.path_check()
             outputthread.start()

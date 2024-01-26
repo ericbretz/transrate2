@@ -20,8 +20,10 @@ def process_task(args):
 
     return tmp_dct
 
-def sgmt(bamfile, bamdct, threads):
+def sgmt(bamfile, bamdct, threads, single):
     # threads = min(threads,6)
+    if single:
+        return bamdct
     with Pool(threads) as p:
         results = p.map(process_task, [[i, bamfile, threads, bamdct] for i in range(threads)])
 

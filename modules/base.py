@@ -20,7 +20,7 @@ def process_task(args):
 
     return tmp_dct
 
-def base(bamfile, bamdct, threads):
+def base(bamfile, bamdct, threads, single):
 
     with Pool(threads) as p:
         results = p.map(process_task, [[i, bamfile, threads, bamdct] for i in range(threads)])
