@@ -18,6 +18,8 @@ if __name__ == '__main__':
             self.clean = {}
             self.colors = ['\033[0;33m', '\033[0;31m', '\033[0;32m']
             self.colorcount = 0
+            self.assemblycount = 0
+            self.assemblytotal = 0
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
                 header = {'Accept': 'application/vnd.github+json'}
@@ -136,6 +138,8 @@ if __name__ == '__main__':
                 topbar = f'{self.color}  ┌{"─" * 74}┐\033[m'
                 bottombar = f'{self.color}  └{"─" * 74}┘\033[m'
                 print(topbar)
+                if self.assemblytotal > 1:
+                    print(f'{self.color}  │\033[m Assembly #: {self.color}{self.assemblycount}/{self.assemblytotal}{self.color}{" " * 57}│\033[m')
                 for k,v in args.__dict__.items():
                     if v:
                         if k == 'assembly':
@@ -163,14 +167,16 @@ if __name__ == '__main__':
                 transrate_start              = MAIN()
                 transrate_start.TERM         = get_term(self)
                 transrate_start.ASSEMBLYLIST = str(args.assembly).strip(' ').split(',') if args.assembly else ''
-                transrate_start.ASSEMBLYLIST = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
-                
+                self.assemblytotal = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
+                transrate_start.ASSEMBLYLIST = self.assemblytotal
+
                 if len(transrate_start.ASSEMBLYLIST) > 1:
                     transrate_start.MULTASSEMBLY = True
                 self.clean                   = transrate_start.__dict__
 
                 for x in transrate_start.ASSEMBLYLIST:
                     self.color = self.colors[self.colorcount]
+                    self.assemblycount += 1
                     transrate_start.__dict__  = self.clean
                     transrate_start.FINISHED  = False
                     transrate_start.ASSEMBLY  = x
