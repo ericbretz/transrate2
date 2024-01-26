@@ -19,7 +19,7 @@ if __name__ == '__main__':
             self.colors = ['\033[0;33m', '\033[0;31m', '\033[0;32m']
             self.colorcount = 0
             try:
-                url = 'https://api.github.com/repos/ericbretz/transrate/releases'
+                url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
                 header = {'Accept': 'application/vnd.github+json'}
                 response = requests.get(url, headers=header)
                 self.latest = response.json()[0]['tag_name']
