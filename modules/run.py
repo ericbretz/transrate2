@@ -646,17 +646,18 @@ class MAIN:
                 except:
                     pass
             print(f'{self.LOGOCOLOR}  └{"─" * 74}┘\033[m')
-            print(scorelabel)
-            for k,v in assemblies.items():
-                try:
-                    if 'p̂' in k or 'p̂' in score[k]:
-                        print(f' {self.LOGOCOLOR}  •\033[m {score[k]:<23}: {v[0]}')
-                    else:
-                        print(f' {self.LOGOCOLOR}  •\033[m {score[k]:<22}: {v[0]}')
-                except:
-                    pass
+            if not self.SINGLE:
+                print(scorelabel)
+                for k,v in assemblies.items():
+                    try:
+                        if 'p̂' in k or 'p̂' in score[k]:
+                            print(f' {self.LOGOCOLOR}  •\033[m {score[k]:<23}: {v[0]}')
+                        else:
+                            print(f' {self.LOGOCOLOR}  •\033[m {score[k]:<22}: {v[0]}')
+                    except:
+                        pass
 
-            print(f'{self.LOGOCOLOR}  └{"─" * 74}┘\033[m')
+                print(f'{self.LOGOCOLOR}  └{"─" * 74}┘\033[m')
 
             try:
                 contig = pd.read_csv(self.RDIR + '/contigs.csv')
@@ -664,6 +665,10 @@ class MAIN:
                     'scnuc_avg' : ['Avg. sCnuc', contig['sCnuc'].mean()],
                     'sccov_avg' : ['Avg. sCcov', contig['sCcov'].mean()],
                     'scord_avg' : ['Avg. sCord', contig['sCord'].mean()],
+                    'scseg_avg' : ['Avg. sCseg', contig['sCseg'].mean()]
+                } if not self.SINGLE else {
+                    'scnuc_avg' : ['Avg. sCnuc', contig['sCnuc'].mean()],
+                    'sccov_avg' : ['Avg. sCcov', contig['sCcov'].mean()],
                     'scseg_avg' : ['Avg. sCseg', contig['sCseg'].mean()]
                 }
                 sclabel = f'{self.LOGOCOLOR}  ┌{"─" * 28}\033[m      Scores      {self.LOGOCOLOR}{"─" * 28}┐\033[m'
