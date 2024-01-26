@@ -18,7 +18,6 @@ if __name__ == '__main__':
             self.clean = {}
             self.colors = ['\033[0;33m', '\033[0;31m', '\033[0;32m']
             self.colorcount = 0
-            self.assemblycount = 0
             self.assemblytotal = 0
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
@@ -168,7 +167,7 @@ if __name__ == '__main__':
                 transrate_start.TERM         = get_term(self)
                 transrate_start.ASSEMBLYLIST = str(args.assembly).strip(' ').split(',') if args.assembly else ''
                 transrate_start.ASSEMBLYLIST = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
-                self.assemblytotal = len(transrate_start.ASSEMBLYLIST)
+                self.assemblytotal           = len(transrate_start.ASSEMBLYLIST)
 
                 if len(transrate_start.ASSEMBLYLIST) > 1:
                     transrate_start.MULTASSEMBLY = True
