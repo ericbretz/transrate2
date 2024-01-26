@@ -345,9 +345,10 @@ class MAIN:
 
     def csv(self):        
         self.STAGE = 'Assembly'
-        csvout = pd.DataFrame(columns=['name', 'p_seqtrue', 'bridges', 'length', 'fragments',
-                                           'both_mapped', 'properpair', 'good', 'basesuncovered',
-                                           'p_notsegmented'])
+        columns = ['name', 'p_seqtrue', 'bridges', 'length', 'fragments',
+                    'both_mapped', 'properpair', 'good', 'basesuncovered', 'p_notsegmented'] if not self.SINGLE else \
+                    ['name', 'p_seqtrue', 'length', 'fragments', 'basesuncovered']
+        csvout = pd.DataFrame(columns=columns)
 
         for key, value in self.RDCT.items():
             csvout.loc[len(csvout)] = value['stats']
