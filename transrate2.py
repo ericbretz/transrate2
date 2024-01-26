@@ -167,8 +167,8 @@ if __name__ == '__main__':
                 transrate_start              = MAIN()
                 transrate_start.TERM         = get_term(self)
                 transrate_start.ASSEMBLYLIST = str(args.assembly).strip(' ').split(',') if args.assembly else ''
-                self.assemblytotal = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
-                transrate_start.ASSEMBLYLIST = self.assemblytotal
+                transrate_start.ASSEMBLYLIST = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
+                self.assemblytotal = len(transrate_start.ASSEMBLYLIST)
 
                 if len(transrate_start.ASSEMBLYLIST) > 1:
                     transrate_start.MULTASSEMBLY = True
