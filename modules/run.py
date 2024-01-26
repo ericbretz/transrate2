@@ -258,7 +258,7 @@ class MAIN:
         self.STAGE = 'Snap Paired'
         mode = 'single' if self.SINGLE else 'paired'
         reads = self.SINGLE if self.SINGLE else f'{self.LEFT} {self.RIGHT}'
-        params = '' if self.SINGLE else '-s 0 1000 -H 300000 -M'
+        params = None if self.SINGLE else '-s 0 1000 -H 300000 -M'
         snap_cmd        = ['snap-aligner', f'{mode}', self.SNAPINDEX, f'{reads}', '-o', self.BAM, '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', f'{params}', '-b', '-D', '5', '-om', '5', '-omax', '10', '-mcp', '10000000']
         snap_run        = subprocess.Popen(snap_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
         stdout, stderr  = snap_run.communicate()
