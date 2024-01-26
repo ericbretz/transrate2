@@ -163,6 +163,8 @@ if __name__ == '__main__':
                 transrate_start              = MAIN()
                 transrate_start.TERM         = get_term(self)
                 transrate_start.ASSEMBLYLIST = str(args.assembly).strip(' ').split(',') if args.assembly else ''
+                transrate_start.ASSEMBLYLIST = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
+                
                 if len(transrate_start.ASSEMBLYLIST) > 1:
                     transrate_start.MULTASSEMBLY = True
                 self.clean                   = transrate_start.__dict__
