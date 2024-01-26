@@ -145,6 +145,10 @@ if __name__ == '__main__':
                             v = v.strip(' ').split(',')
                             v = v[self.assemblycount]
                             self.assemblycount += 1
+                        elif k == 'left' and not args.right:
+                            k = 'reads'
+                        elif k == 'right' and not args.left:
+                            k = 'reads'
                         xlen = 74 - len(str(k)) - 40
                         x = ' ' * xlen
                         y = 64 - len(str(v)[-30:]) - 25
