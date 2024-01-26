@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
         def logoprint(self):
             
-            C = self.colors[2]
+            C = self.colors[0]
             H = '\033[m'
             self.color = C
             W = '\033[37m'
