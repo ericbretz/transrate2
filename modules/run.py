@@ -369,7 +369,7 @@ class MAIN:
         self.STAGE = 'Assembly'
         self.STARTED = True
 
-        assembly_solo.assembly_solo(self.ASSEMBLY, self.OUTDIR)
+        assembly_solo.assembly_solo(self.ASSEMBLY, self.OUTDIR, self.MULTASSEMBLY)
         
         self.log_time('assembly', 'end')
         self.STAGEDONE = True

@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-def assembly_solo(fa_file, outdir):
+def assembly_solo(fa_file, outdir, multi=False):
     column_headers = ['assembly', 'n_seqs', 'smallest', 'largest', 'n_bases', 'mean_len',
                     'median_len', 'std_len', 'n_under_200', 'n_over_1k', 'n_over_10k', 
                     'n_with_orf', 'mean_orf_percent', 'n90', 'n70', 'n50', 'n30', 'n10',
@@ -154,4 +154,7 @@ def assembly_solo(fa_file, outdir):
     output_df.loc[0, 'proportion_n']         = n_prop
    
     outfile    = os.path.join(outdir, 'assembly.csv')
-    output_df.to_csv(outfile, index=False)
+    if os.path.exists(outfile) and multi:
+        output_df.to_csv(outfile, index=False, mode='a', header=False)
+    else:
+        output_df.to_csv(outfile, index=False)
