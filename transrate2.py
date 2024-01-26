@@ -16,6 +16,8 @@ if __name__ == '__main__':
             self.color = ''
             self.assemblycount = 0
             self.clean = {}
+            self.colors = ['\033[0;33m', '\033[0;31m', '\033[0;32m']
+            self.colorcount = 0
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate/releases'
                 header = {'Accept': 'application/vnd.github+json'}
@@ -25,12 +27,8 @@ if __name__ == '__main__':
                 self.latest = ''
 
         def logoprint(self):
-            colors = {
-                'red': '\033[0;31m',
-                'green': '\033[0;32m',
-                'yellow': '\033[0;33m',
-            }
-            C = colors['yellow']
+            
+            C = self.colors[2]
             H = '\033[m'
             self.color = C
             W = '\033[37m'
@@ -168,6 +166,7 @@ if __name__ == '__main__':
                 self.clean                   = transrate_start.__dict__
 
                 for x in transrate_start.ASSEMBLYLIST:
+                    self.color = self.colors[self.colorcount]
                     transrate_start.__dict__  = self.clean
                     transrate_start.FINISHED  = False
                     transrate_start.ASSEMBLY  = x
@@ -180,6 +179,9 @@ if __name__ == '__main__':
                     transrate_start.CLUTTER   = args.clutter if args.clutter else False
                     transrate_start.STAR      = args.STAR if args.STAR else False
                     transrate_start.LOGOCOLOR = self.color
+                    self.colorcount += 1
+                    if self.colorcount == 3:
+                        self.colorcount = 0
                     parameters()
                     transrate_start.run()
                     while not transrate_start.FINISHED:
