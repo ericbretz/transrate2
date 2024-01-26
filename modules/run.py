@@ -360,7 +360,7 @@ class MAIN:
         self.log_set('assembly')
         self.STAGE = 'Assembly'
 
-        assembly.assembly(self.CSVOUT, self.ASSEMBLY, self.SNAPCOUNT, self.OUTDIR, self.STAR)
+        assembly.assembly(self.CSVOUT, self.ASSEMBLY, self.SNAPCOUNT, self.OUTDIR, self.STAR, self.MULTASSEMBLY)
 
         self.log_time('assembly', 'end')
         self.STAGEDONE = True
@@ -382,7 +382,7 @@ class MAIN:
         self.STAGE = 'Assembly'
         self.STARTED = True
   
-        assembly_single.assembly_single(self.ASSEMBLY, self.OUTDIR, self.MULTASSEMBLY)
+        assembly_single.assembly_single(self.CSVOUT, self.ASSEMBLY, self.SNAPCOUNT, self.OUTDIR, self.STAR, self.MULTASSEMBLY)
         
         self.log_time('assembly', 'end')
         self.STAGEDONE = True

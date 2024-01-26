@@ -3,7 +3,7 @@ import os
 import math
 import numpy as np
 
-def assembly(r_csv, fa_file, snapf, outdir, star):
+def assembly(r_csv, fa_file, snapf, outdir, star, multi):
     column_headers = ['assembly', 'n_seqs', 'smallest', 'largest', 'n_bases', 'mean_len',
         'median_len', 'std_len', 'n_under_200', 'n_over_1k', 'n_over_10k', 'n_with_orf',
         'mean_orf_percent', 'n90', 'n70', 'n50', 'n30', 'n10', 'gc', 'bases_n',
@@ -325,7 +325,11 @@ def assembly(r_csv, fa_file, snapf, outdir, star):
     output_df.loc[0, 'weighted']             = weighted_score()
 
     outfile    = os.path.join(outdir, 'transrate', 'assembly.csv')
-    output_df.to_csv(outfile, index=False)
+    if os.path.exists(outfile) and multi:
+        output_df.to_csv(outfile, index=False, mode='a', header=False)
+    else:
+        output_df.to_csv(outfile, index=False)
 
-    contigfile = os.path.join(outdir, 'transrate', 'contigs.csv')
+    cfile = 'contigs.csv' if not multi else f'{assembly}.contigs.csv'
+    contigfile = os.path.join(outdir, 'transrate', f'{cfile}')
     contig_df.to_csv(contigfile, index=False)
