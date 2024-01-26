@@ -137,8 +137,8 @@ if __name__ == '__main__':
                 bottombar = f'{self.color}  └{"─" * 74}┘\033[m'
                 print(topbar)
                 if self.assemblytotal > 1:
-                    y = 74 - len(str(self.assemblycount + 1)) - len(str(self.assemblytotal)) - 14
-                    print(f'{self.color}  │\033[m Assembly #: {self.assemblycount + 1}/{self.assemblytotal}{self.color}{" " * y}│\033[m')
+                    y = 80 - len(str(self.assemblycount + 1)) - len(str(self.assemblytotal)) - 10
+                    print(f'{self.color}  │\033[m Assembly #{' ' * 24}{self.assemblycount + 1}/{self.assemblytotal}{self.color}{y}│\033[m')
                 for k,v in args.__dict__.items():
                     if v:
                         if k == 'assembly':
