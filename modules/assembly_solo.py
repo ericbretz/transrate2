@@ -153,5 +153,5 @@ def assembly_solo(fa_file, outdir):
     output_df.loc[0, 'bases_n']              = n_count
     output_df.loc[0, 'proportion_n']         = n_prop
    
-    outfile    = os.path.join(outdir, 'assemblies.csv')
+    outfile    = os.path.join(outdir, 'assembly.csv')
     output_df.to_csv(outfile, index=False)

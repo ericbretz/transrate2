@@ -13,14 +13,15 @@ class MAIN:
     def __init__(self):
         #### Parameters ####
         self.ASSEMBLYLIST = []
-        self.ASSEMBLY   = ''
-        self.LEFT       = ''
-        self.RIGHT      = ''
-        self.REFERENCE  = ''
-        self.THREADS    = 1
-        self.BASE       = ''
-        self.TERM       = False
-        self.STAR       = False
+        self.ASSEMBLY     = ''
+        self.LEFT         = ''
+        self.RIGHT        = ''
+        self.REFERENCE    = ''
+        self.THREADS      = 1
+        self.BASE         = ''
+        self.TERM         = False
+        self.STAR         = False
+        self.MULTASSEMBLY = False
 
         #### Paths ####
         self.OUTDIR     = ''
@@ -177,7 +178,7 @@ class MAIN:
         else:
             self.SNAPCOUNT  = os.path.join(self.RDIR, 'snapcount.txt')
         self.CSVOUT     = os.path.join(self.RDIR, 'transrate.csv')
-        self.ASSEMBLIES = os.path.join(self.OUTDIR, 'assemblies.csv')
+        self.ASSEMBLIES = os.path.join(self.OUTDIR, 'assembly.csv')
         self.GOODFA     = os.path.join(self.RDIR, f'good.{self.BASE}.fa')
     
     def log_time(self, process, type):
@@ -380,7 +381,7 @@ class MAIN:
         if self.LEFT and self.RIGHT:
             assemblies = f'{self.RDIR}/assembly.csv'
         else:
-            assemblies = f'{self.OUTDIR}/assemblies.csv'
+            assemblies = f'{self.OUTDIR}/assembly.csv'
 
         reference.reference(self.ASSEMBLY, self.REFERENCE, assemblies, self.RDIR, self.THREADS)
 
@@ -663,7 +664,7 @@ class MAIN:
             print(clear)
             contiglabel = f'{self.LOGOCOLOR}  ┌{"─" * 28}\033[m  Contig Metrics  {self.LOGOCOLOR}{"─" * 28}┐\033[m'
 
-            assemblies = pd.read_csv(self.OUTDIR + '/assemblies.csv').to_dict()
+            assemblies = pd.read_csv(self.OUTDIR + '/assembly.csv').to_dict()
             contig = {
                         'n_seqs'              : '# Seqs',
                         'smallest'            : 'Smallest',
@@ -709,7 +710,7 @@ class MAIN:
             if self.LEFT and self.RIGHT:
                 assemblies = pd.read_csv(self.RDIR + '/assembly.csv').to_dict()
             else:
-                assemblies = pd.read_csv(self.OUTDIR + '/assemblies.csv').to_dict()
+                assemblies = pd.read_csv(self.OUTDIR + '/assembly.csv').to_dict()
 
             refs = {
                 'CRBB_hits' : 'CRBB Hits',
