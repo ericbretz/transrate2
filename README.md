@@ -16,23 +16,11 @@ $$\Huge\textcolor{yellow}{\textsf{Under Development}}$$
 
 ## Requirements
 <b>Salmon</b>&emsp;&emsp;&emsp;&emsp;https://github.com/COMBINE-lab/salmon<br>
-```
-apt install salmon
-```
+
 <b>Snap-aligner</b>&emsp;&nbsp;https://github.com/amplab/snap<br>
-```
-apt install snap-aligner
-```
+
 <b>STAR</b> (optional)&nbsp;https://github.com/alexdobin/STAR<br>
-```
-apt install rna-star
-```
+
 <b>Samtools</b>&emsp;&emsp;&emsp;https://github.com/samtools/samtools<br>
-```
-apt install samtools
-```
+
 <b>Diamond</b>&emsp;&emsp;&emsp;https://github.com/bbuchfink/diamond
-```
-wget http://github.com/bbuchfink/diamond/releases/download/v2.1.8/diamond-linux64.tar.gz
-tar xzf diamond-linux64.tar.gz
-```
