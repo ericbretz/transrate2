@@ -186,7 +186,7 @@ class MAIN:
             self.SNAPCOUNT = os.path.join(self.STARDIR, self.BASE + '_Log.final.out')
         else:
             self.SNAPCOUNT  = os.path.join(self.RDIR, 'snapcount.txt')
-        csvout = os.path.join(self.RDIR, 'transrate.csv') if not self.MULTASSEMBLY else os.path.join(self.RDIR, f'{self.BASE}.transrate.csv')
+        csvout = os.path.join(self.RDIR, f'{self.BASE}.transrate.csv')
         self.CSVOUT     = csvout
         self.ASSEMBLIES = os.path.join(self.OUTDIR, 'assembly.csv')
         self.GOODFA     = os.path.join(self.RDIR, f'good.{self.BASE}.fa')
@@ -269,11 +269,10 @@ class MAIN:
         self.log_time('snap_paired', 'start')
         self.log_set('snap_paired')
         self.STAGE = 'Snap Paired'
-        mode = 'single' if self.SINGLE else 'paired'
         if not self.SINGLE:
-            snap_cmd        = ['snap-aligner', f'{mode}', self.SNAPINDEX, self.LEFT, self.RIGHT, '-o', self.BAM, '-s', '0', '1000', '-H', '300000',  '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-M', '-D', '5', '-om', '5', '-omax', '10']
+            snap_cmd        = ['snap-aligner', 'paired', self.SNAPINDEX, self.LEFT, self.RIGHT, '-o', self.BAM, '-s', '0', '1000', '-H', '300000',  '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-M', '-D', '5', '-om', '5', '-omax', '10']
         else:
-            snap_cmd        = ['snap-aligner', f'{mode}', self.SNAPINDEX, self.SINGLE, '-o', self.BAM, '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-D', '5', '-om', '5', '-omax', '10']
+            snap_cmd        = ['snap-aligner', 'single', self.SNAPINDEX, self.SINGLE, '-o', self.BAM, '-h', '2000', '-d', '30', '-t', f'{self.THREADS}', '-b', '-D', '5', '-om', '5', '-omax', '10']
         snap_run        = subprocess.Popen(snap_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
 
         stdout, stderr  = snap_run.communicate()
@@ -291,7 +290,7 @@ class MAIN:
         self.log_set('salmon_quant')
         self.STAGE = 'Salmon Quant'
         self.SALMONBAM = os.path.join(self.SALMONDIR, 'postSample.bam')
-        salmon_cmd      = ['salmon', 'quant', '--libType', 'IU', '--alignments', self.BAM, '--targets', self.ASSEMBLY, f'--threads={self.THREADS}', '--sampleOut', '--sampleUnaligned', '--output', self.SALMONDIR, '--noEffectiveLengthCorrection']
+        salmon_cmd      = ['salmon', 'quant', '--libType', 'IU', '--alignments', self.BAM, '--targets', self.ASSEMBLY, f'--threads={self.THREADS}', '--sampleOut', '--sampleUnaligned', '--output', self.SALMONDIR]
         salmon_run      = subprocess.Popen(salmon_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
         stdout, stderr  = salmon_run.communicate()
         returncode      = salmon_run.returncode

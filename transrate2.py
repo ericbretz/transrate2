@@ -6,6 +6,7 @@ import psutil
 import requests
 import os
 from modules.run import MAIN
+from modules.reqs import req_check
 
 if __name__ == '__main__':
     class PARSER:
@@ -16,6 +17,7 @@ if __name__ == '__main__':
             self.colors        = ['\033[0;33m', '\033[0;31m', '\033[0;32m']
             self.colorcount    = 0
             self.quiet         = False
+            self.reqs          = False
             
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
@@ -59,6 +61,7 @@ if __name__ == '__main__':
 '''
 
             print(transrate_c)
+            self.reqs = req_check()
 
         def helpoptions(self):
 
@@ -206,6 +209,8 @@ if __name__ == '__main__':
                     if self.colorcount == 3:
                         self.colorcount = 0
                     self.logoprint()
+                    if self.reqs:
+                        sys.exit()
                     parameters()
                     transrate_start.run()
                     while not transrate_start.FINISHED:
