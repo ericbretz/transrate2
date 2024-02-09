@@ -4,7 +4,7 @@
 <b>Version 2.0.5</b><br>
 Quality analysis for de-novo transcriptome assemblies</p>
 
-Transrate2 is a reimplementation of the original bioinformatics tool, TransRate (Smith-Unna et al. 2015).<br>
+TransRate2 is a reimplementation of the original bioinformatics tool, TransRate (Smith-Unna et al. 2015).<br>
 https://github.com/blahah/transrate
 
 ## Usage/Examples
