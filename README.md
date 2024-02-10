@@ -26,3 +26,4 @@ $$\Huge\textcolor{yellow}{\textsf{Under Development}}$$
 <b>Diamond</b>&emsp;&emsp;&emsp;https://github.com/bbuchfink/diamond
 
 ## Bug Reporting
+Please report bugs in the <a href="https://github.com/ericbretz/transrate2/issues">Issue Tracker</a>
