@@ -1,8 +1,8 @@
 <p align="center">
 <picture><img src="https://i.imgur.com/ksFvFqp.png"
      alt="TransRate 2.0.5"/><br></picture>
-<b>Version 2.0.5</b><br>
 Quality analysis for de-novo transcriptome assemblies</p>
+<p><img alt="GitHub Tag" src="https://img.shields.io/github/v/tag/ericbretz/transrate2"> <img alt='GitHub Clones' src='https://img.shields.io/badge/dynamic/json?color=success&label=Clone&query=count&url=https://gist.githubusercontent.com/ericbretz/b15efc70dafd2fa92db05edc588c1fae/raw/clone.json&logo=github'> <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/ericbretz/transrate2/total"></p>
 
 TransRate2 is a reimplementation of the original bioinformatics tool, TransRate (Smith-Unna et al. 2015).<br>
 https://github.com/blahah/transrate
@@ -24,3 +24,5 @@ $$\Huge\textcolor{yellow}{\textsf{Under Development}}$$
 <b>Samtools</b>&emsp;&emsp;&emsp;https://github.com/samtools/samtools<br>
 
 <b>Diamond</b>&emsp;&emsp;&emsp;https://github.com/bbuchfink/diamond
+
+## Bug Reporting
