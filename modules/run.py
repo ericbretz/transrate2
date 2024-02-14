@@ -20,7 +20,9 @@ class MAIN:
         self.THREADS      = 1
         self.BASE         = ''
         self.TERM         = False
-        self.STAR         = False
+        self.STAR         = True
+        self.BT2          = False
+        self.SNAP         = False
         self.MULTASSEMBLY = False
         self.QUIET        = False
         self.SINGLE       = ''
@@ -30,6 +32,8 @@ class MAIN:
         self.OUTDIR     = ''
         self.STARDIR    = ''
         self.STARINDEX  = ''
+        self.BT2DIR     = ''
+        self.BT2INDEX   = ''
         self.SNAPDIR    = ''
         self.SNAPINDEX  = ''
         self.SALMONDIR  = ''
@@ -51,23 +55,25 @@ class MAIN:
         self.LOGDCT     = {}
         self.LOGDIR     = ''
         self.LOGFILES   = {
-            'snap_paired'   : [f'{self.RUNTIME}_snap_stdout.log',           f'{self.RUNTIME}_snap_stderr.log'          ],
-            'snap_index'    : [f'{self.RUNTIME}_snap_index_stdout.log',     f'{self.RUNTIME}_snap_index_stderr.log'    ],
-            'star_index'    : [f'{self.RUNTIME}_star_index_stdout.log',     f'{self.RUNTIME}_star_index_stderr.log'    ],
-            'star'          : [f'{self.RUNTIME}_star_stdout.log',           f'{self.RUNTIME}_star_stderr.log'          ],
-            'salmon_quant'  : [f'{self.RUNTIME}_salmon_stdout.log',         f'{self.RUNTIME}_salmon_stderr.log'        ],
-            'samtools_sort' : [f'{self.RUNTIME}_samtools_stdout.log',       f'{self.RUNTIME}_samtools_stderr.log'      ],
-            'samtools_index': [f'{self.RUNTIME}_samtools_index_stdout.log', f'{self.RUNTIME}_samtools_index_stderr.log'],
-            'transrate'       : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'assembly'      : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'assembly_solo' : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'reference'     : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'file'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'frag'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'seq'           : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'good'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'base'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
-            'sgmt'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'       ],
+            'snap_paired'   : [f'{self.RUNTIME}_snap_stdout.log',             f'{self.RUNTIME}_snap_stderr.log'],
+            'snap_index'    : [f'{self.RUNTIME}_snap_index_stdout.log',       f'{self.RUNTIME}_snap_index_stderr.log'],
+            'bowtie2_index' : [f'{self.RUNTIME}_bowtie2_index_stdout.log',    f'{self.RUNTIME}_bowtie2_index_stderr.log'],
+            'bowtie2'       : [f'{self.RUNTIME}_bowtie2_stdout.log',          f'{self.RUNTIME}_bowtie2_stderr.log'],
+            'star_index'    : [f'{self.RUNTIME}_star_index_stdout.log',       f'{self.RUNTIME}_star_index_stderr.log'],
+            'star'          : [f'{self.RUNTIME}_star_stdout.log',             f'{self.RUNTIME}_star_stderr.log'],
+            'salmon_quant'  : [f'{self.RUNTIME}_salmon_stdout.log',           f'{self.RUNTIME}_salmon_stderr.log'],
+            'samtools_sort' : [f'{self.RUNTIME}_samtools_stdout.log',         f'{self.RUNTIME}_samtools_stderr.log'],
+            'samtools_index': [f'{self.RUNTIME}_samtools_index_stdout.log',   f'{self.RUNTIME}_samtools_index_stderr.log'],
+            'transrate'     : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'assembly'      : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'assembly_solo' : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'reference'     : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'file'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'frag'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'seq'           : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'good'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'base'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
+            'sgmt'          : [f'{self.RUNTIME}_transrate_stdout.log',        f'{self.RUNTIME}_transrate_stderr.log'],
         }
 
         self.STDOUT     = ''
@@ -100,47 +106,6 @@ class MAIN:
                 'base': ['• Locating uncovered bases'], 
                 'sgmt': ['• Calculating segmentation'],
                 }
-        
-    # def good_fa(self):
-    #     goodlst = []
-    #     goodseq = []
-
-    #     with open(self.GOODFA, 'w') as good_f:
-    #         good_f.write('')
-
-    #     for k,v in self.RDCT.items():
-    #         try:
-    #             for g in v['good']['goodlst']:
-    #                 if g not in goodlst:
-    #                     goodlst.append(g)
-    #                     self.GOODCOUNT += 1
-    #         except:
-    #             pass
-        
-    #     with open(self.ASSEMBLY, 'r') as assembly_f:
-    #         for line in assembly_f:
-    #             if line.startswith('>'):
-    #                 if line.strip('>').strip('\n') in goodlst:
-    #                     goodseq = [line]
-    #                     line = next(assembly_f)
-    #                     if not line.startswith('>'):
-    #                         goodseq.append(line)
-    #                     while True:
-    #                         if line.startswith('>'):
-    #                             with open(self.GOODFA, 'a') as good_f:
-    #                                 good_f.write(''.join(goodseq))
-    #                             goodseq = []
-    #                             break
-    #                         try:
-    #                             line = next(assembly_f)
-    #                             if not line.startswith('>'):
-    #                                 goodseq.append(line)
-    #                         except:
-    #                             break
-                             
-    #         with open(self.GOODFA, 'a') as good_f:
-    #             good_f.write(''.join(goodseq))
-
 
     def path_cleanup(self, path):
         clean_path = os.path.basename(path)
@@ -173,10 +138,14 @@ class MAIN:
         self.SALMONDIR  = os.path.join(self.OUTDIR, 'salmon')
         self.RDIR       = os.path.join(self.OUTDIR, 'transrate')
         self.LOGDIR     = os.path.join(self.OUTDIR, 'logs')
+        self.BT2DIR     = os.path.join(self.OUTDIR, 'bowtie2')
+        self.BT2INDEX   = os.path.join(self.BT2DIR, 'bowtie2_index')
 
         #### Files ####
         if self.STAR:
             self.BAM    = os.path.join(self.STARDIR, f'{self.BASE}_Aligned.out.bam')
+        elif self.BT2:
+            self.BAM    = os.path.join(self.BT2DIR, f'{self.BASE}.bam')
         else:
             self.BAM    = os.path.join(self.SNAPDIR, f'{self.BASE}.bam')
         self.SORTEDBAM  = os.path.join(self.SALMONDIR, 'postSample.sorted.bam')
@@ -209,6 +178,57 @@ class MAIN:
             stdout_f.write(stdout.decode('utf-8'))
         with open(self.STDERR, 'a') as stderr_f:
             stderr_f.write(stderr.decode('utf-8'))
+        if self.STAGE == 'Bowtie2':
+            self.SNAPCOUNT = self.STDERR
+
+    def bowtie2_index(self):
+        self.log_time('bowtie2_index', 'start')
+        self.log_set('bowtie2_index')
+        self.STAGE = 'Bowtie2 Index'
+        self.STARTED = True
+
+        bt2_index_cmd  = ['bowtie2-build', '--threads', str(self.THREADS), self.ASSEMBLY, self.BT2INDEX]
+        bt2_index_run  = subprocess.Popen(bt2_index_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
+        stdout, stderr  = bt2_index_run.communicate()
+        returncode      = bt2_index_run.returncode
+        self.PGID       = bt2_index_run.pid
+
+        self.log_write(stdout, stderr)
+        self.log_time('bowtie2_index', 'end')
+        self.STAGEDONE = True        
+
+    def bowtie2(self):
+        self.log_time('bowtie2', 'start')
+        self.log_set('bowtie2')
+        self.STAGE = 'Bowtie2'
+        self.STARTED = True
+
+        # if self.LEFT.endswith('.gz') or self.RIGHT.endswith('.gz'):
+        #     if self.SINGLE:
+        #         al = '--al-gz'
+        #         un = '--un-gz'
+        #     else:
+        #         al = '--al-conc-gz'
+        #         un = '--un-conc-gz'
+        # else:
+        #         al = '--al'
+        #         un = '--un'
+        #         alconc = '--al-conc'
+        #         unconc = '--un-conc'
+
+        if not self.SINGLE:
+            bt2_cmd = ['bowtie2', '--threads', f'{self.THREADS}', '--very-sensitive', '--phred33', '--no-unal', '--no-mixed', '--no-discordant', '--rdg', '1000,1000', '--rfg', '1000,1000', '-x', self.BT2INDEX, '-1', self.LEFT, '-2', self.RIGHT, '-S', self.BAM]
+        else:
+            bt2_cmd = ['bowtie2', '--threads', f'{self.THREADS}', '--very-sensitive', '--phred33', '--no-unal', '--no-mixed', '--no-discordant', '--rdg', '1000,1000', '--rfg', '1000,1000', '-x', self.BT2INDEX, '-U', self.SINGLE, '-S', self.BAM]
+        
+        bt2_run = subprocess.Popen(bt2_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid, shell=False)
+        stdout, stderr = bt2_run.communicate()
+        returncode = bt2_run.returncode
+        self.PGID = bt2_run.pid
+
+        self.log_write(stdout, stderr)
+        self.log_time('bowtie2', 'end')
+        self.STAGEDONE = True
 
     def star_index(self):
         self.log_time('star_index', 'start')
@@ -231,7 +251,7 @@ class MAIN:
         self.log_set('star')
         self.STAGE = 'STAR'
         self.SNAPCOUNT = os.path.join(self.STARDIR, self.BASE + '_Log.final.out')
-        reads = self.SINGLE if self.SINGLE else [self.LEFT, self.RIGHT]
+        reads = [self.SINGLE] if self.SINGLE else [self.LEFT, self.RIGHT]
         if self.LEFT.endswith('.gz') or self.RIGHT.endswith('.gz'):
             star_cmd = ['STAR', '--runThreadN', f'{self.THREADS}', '--genomeDir', self.STARINDEX, '--readFilesIn'] 
             star_cmd.extend(reads)
@@ -340,7 +360,7 @@ class MAIN:
 
         for func in functions:
             if self.SINGLE:
-                if func.name.lower() in ['good', 'sgmt']:
+                if func.__name__.lower() in ['good', 'sgmt']:
                     break
             self.RSTAGE = func.__name__.lower()
             self.DESC[func.__name__.lower()].append(time.perf_counter()) 
@@ -384,6 +404,7 @@ class MAIN:
         assembly_main.SNAP   = self.SNAPCOUNT
         assembly_main.OUTDIR = self.OUTDIR
         assembly_main.STAR   = self.STAR
+        assembly_main.BT2    = self.BT2
         assembly_main.MULTI  = self.MULTASSEMBLY
         assembly_main.SINGLE = self.SINGLE
         assembly_main.SOLO   = True if not self.LEFT and not self.RIGHT else False
@@ -426,6 +447,9 @@ class MAIN:
                 if self.STAR:
                     self.star_index()
                     self.star()
+                elif self.BT2:
+                    self.bowtie2_index()
+                    self.bowtie2()
                 else:
                     self.snap_index()
                     self.snap()
@@ -453,7 +477,7 @@ class MAIN:
         self.FINISHED = True
 
     def clutter(self):
-        delfolders = ['snap', 'salmon']
+        delfolders = ['snap', 'salmon'] # ! Add STAR and BOWTIE2 directories
         for root, dirs, files in os.walk(self.OUTDIR):
             for file in files:
                 if not file.endswith('.csv') and 'logs' not in root:
@@ -469,7 +493,7 @@ class MAIN:
             self.OUTDIR = os.path.join(os.getcwd())
         if not os.path.exists(self.LOGDIR):
             os.makedirs(self.LOGDIR)
-        if not os.path.exists(self.SNAPDIR) and not self.STAR:
+        if not os.path.exists(self.SNAPDIR) and self.SNAP:
             os.makedirs(self.SNAPDIR)
             if not os.path.exists(self.SNAPINDEX):
                 os.makedirs(self.SNAPINDEX)
@@ -481,7 +505,10 @@ class MAIN:
             os.makedirs(self.SALMONDIR)
         if not os.path.exists(self.RDIR):
             os.makedirs(self.RDIR)
-
+        if not os.path.exists(self.BT2DIR) and self.BT2:
+            os.makedirs(self.BT2DIR)
+            if not os.path.exists(self.BT2INDEX):
+                os.makedirs(self.BT2INDEX)
 
     def output(self):
         while not self.STARTED:

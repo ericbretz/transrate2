@@ -2,15 +2,20 @@ import os
 import sys
 import subprocess
 
-def req_check():
+def req_check(star = False, bt2 = False):
     color          = '\033[0;33m'
     tools          = {
-          'snap-aligner': 'https://github.com/amplab/snap',
-          'salmon'      : 'https://github.com/COMBINE-lab/salmon',
-          'samtools'    : 'https://github.com/samtools/samtools',
-          'diamond'     : 'https://github.com/bbuchfink/diamond',
+          'Snap-aligner': 'https://github.com/amplab/snap',
+          'Salmon'      : 'https://github.com/COMBINE-lab/salmon',
+          'Samtools'    : 'https://github.com/samtools/samtools',
+          'Diamond'     : 'https://github.com/bbuchfink/diamond',
         # 'STAR'        : 'https://github.com/alexdobin/STAR'
         }
+    if star:
+        tools['STAR'] = 'https://github.com/alexdobin/STAR'
+    if bt2:
+        tools['Bowtie2'] = 'https://github.com/BenLangmead/bowtie2'
+
     missing     = []
     toollabel   = f'{color}  ┌{"─" * 29}\033[m  Requirements  {color}{"─" * 29}┐\033[m'
     bottomlabel = f'{color}  └{"─" * 74}┘\033[m'

@@ -5,8 +5,8 @@ y = str(date_time.year)
 
 __major__ = 2
 __minor__ = 0
-__patch__ = 5
-__dev__   = False
+__patch__ = 6
+__dev__   = True
 __devV__  = 1
 __script_name__ = 'Transrate2'
 __version__ = f'{__major__}.{__minor__}.{__patch__}' if not __dev__ else f'{__major__}.{__minor__}.{__patch__}.DEV-{__devV__}'

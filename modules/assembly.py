@@ -19,6 +19,7 @@ class Assembly:
         self.SINGLE   = False
         self.SOLO     = False
         self.STAR     = False
+        self.BT2      = False
 
         #### Dataframes ####
         self.OUTPUT_DF = None
@@ -189,6 +190,13 @@ class Assembly:
             missing_columns = list(set(self.CHEADERS) - set(self.CONTIG_DF.columns))
             for column in missing_columns:
                 self.CONTIG_DF[column] = 0
+        elif not self.SINGLE:
+            self.CHEADERS = [
+            'name', 'length', 'prop_gc', 'orf_length',
+            'fragments', 'both_mapped', 'basesuncovered', 
+            'p_bases_covered', 'p_seqtrue', 'eff_length', 
+            'eff_count', 'tpm', 'coverage', 'sCnuc', 'sCcov',
+            ]
 
         self.OUTPUT_DF = pd.DataFrame(columns=self.HEADERS)
             
@@ -198,10 +206,18 @@ class Assembly:
             for line in open(self.SNAP, 'r'):
                 if 'Number of input reads' in line:
                     self.fragments = int(line.split('	')[1])
+        elif self.BT2:
+            with open(self.SNAP, 'r') as file:
+                lines = file.readlines()
+                self.fragments = int((lines[0].split(' ')[0]))
         else:
             with open(self.SNAP, 'r') as file:
                 lines = file.readlines()
-                self.fragments = int(int(lines[3].strip().split(' ')[0].replace(',', '')) / 2)
+                if self.SINGLE:
+                    self.fragments = int(lines[3].strip().split(' ')[0].replace(',', ''))
+                else:
+                    self.fragments = int(int(lines[3].strip().split(' ')[0].replace(',', '')) / 2)
+
    
     def longest_orf(self):
         longest  = 0
@@ -394,7 +410,7 @@ class Assembly:
         self.score = self.scores()
         self.CONTIG_DF['score'] = self.score
         self.raw_score_val = round(self.raw_score(),6)
-        self.optimal_score_val = self.optimal_score()
+        self.optimal_score_val = self.optimal_score() 
 
     def sc_metrics(self):            
         for index, row in self.CONTIG_DF.iterrows():
@@ -573,7 +589,7 @@ class Assembly:
         if 'sCseg' in self.OUTPUT_DF.columns:
             self.OUTPUT_DF.loc[0, 'sCseg']                = self.CONTIG_DF['sCseg'].mean()
 
-        self.good_contigs()
+        self.good_contigs() if not self.SOLO and not self.SINGLE else None
 
         outfile    = os.path.join(self.OUTDIR, 'transrate', 'assembly.csv')
         if os.path.exists(outfile) and self.MULTI:

@@ -18,6 +18,7 @@ if __name__ == '__main__':
             self.colorcount    = 0
             self.quiet         = False
             self.reqs          = False
+            self.options       = {}
             
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
@@ -27,7 +28,7 @@ if __name__ == '__main__':
             except:
                 self.latest = ''
 
-        def logoprint(self):
+        def logoprint(self, star = False, bowtie2 = False):
             if self.quiet:
                 return
             
@@ -61,7 +62,16 @@ if __name__ == '__main__':
 '''
 
             print(transrate_c)
-            self.reqs = req_check()
+            self.reqs = req_check(star, bowtie2)
+
+        def aligners(self):
+            print(f'{self.color}  ┌{"─" * 27}\033[m    Aligner Error   {self.color}{"─" * 27}┐\033[m')
+            print(f'{self.color}  │ \033[m Please choose only one aligner to use.{self.color}{" " * 34}│\033[m')
+            print(f'{self.color}  │  •\033[m STAR    (-s) is the default aligner.{self.color}{" " * 34}│\033[m')
+            print(f'{self.color}  │  •\033[m Snap    (-p){" " * 58}{self.color}│\033[m')
+            print(f'{self.color}  │  •\033[m Bowtie2 (-b){" " * 58}{self.color}│\033[m')
+            print(f'{self.color}  │ \033[m Or use (--help) for more options.{self.color}{" " * 39}│\033[m')
+            print(f'{self.color}  └{"─" * 74}┘\033[m')
 
         def helpoptions(self):
 
@@ -70,28 +80,31 @@ if __name__ == '__main__':
 
             modebar = f'{self.color}  ┌{"─" * 28}\033[m    Mode Types    {self.color}{"─" * 28}┐\033[m'
             extrabar = f'{self.color}  ┌{"─" * 28}\033[m     #Threads     {self.color}{"─" * 28}┐\033[m'
-            options = {
-                'Assembly': ['--assembly', '-a', 'Path to assembly file (FASTA)'],
-                'Left Reads': ['--left', '-l', 'Path to left reads file (FASTQ)'],
-                'Right Reads': ['--right', '-r', 'Path to right reads file (FASTQ)'],
-                'Reference': ['--reference', '-f', 'Path to reference file (FASTA)'],
+            self.options = {
+                'Assembly'        : ['--assembly', '-a', 'Path to assembly file (FASTA)'],
+                'Left Reads'      : ['--left', '-l', 'Path to left reads file (FASTQ)'],
+                'Right Reads'     : ['--right', '-r', 'Path to right reads file (FASTQ)'],
+                'Reference'       : ['--reference', '-f', 'Path to reference file (FASTA)'],
                 'Output Directory': ['--outdir', '-o', 'Path to output directory'],
-                'Threads': ['--threads', '-t', 'Number of threads to use'],
-                'STAR': ['--STAR', '-s', 'Use STAR aligner'],
-                'SNAP': ['--SNAP', '-p', 'Use SNAP aligner (default)'],
-                'Clutter': ['--clutter', '-c', 'Remove intermediate files'],
-                'Quiet': ['--quiet', '-q', 'Supress terminal output'],
-                'Help': ['--help', '-h', 'Display this help message']
+                'Threads'         : ['--threads', '-t', 'Number of threads to use'],
+                'STAR'            : ['--star', '-s', 'Use STAR aligner (default)'],
+                'Snap'            : ['--snap', '-p', 'Use Snap aligner'],
+                'Bowtie2'         : ['--bowtie2', '-b', 'Use Bowtie2 aligner'],
+                'Clutter'         : ['--clutter', '-c', 'Remove intermediate files'],
+                'Quiet'           : ['--quiet', '-q', 'Supress terminal output'],
+                'Help'            : ['--help', '-h', 'Display this help message']
             }
             modes = {
-                'Assembly': ['-a', 'Only run assembly analysis'],
-                'Reads': ['-a -l -r', 'Run assembly with reads analysis'],
-                'All': ['-a -l -r -f', 'Run assembly with reads and reference'],
+                'Assembly' : ['-a', 'Run assembly analysis only.'],
+                'Reads'    : ['-a -l -r', 'Run assembly with paired-end reads analysis'],
+                'All'      : ['-a -l -r -f', 'Run assembly with paired-end reads and reference'],
+                'Single'   : ['-a -l', 'Run assembly with single-end reads analysis'],
                 'Reference': ['-a -f', 'Run assembly with reference analysis'],
             }
 
+
             print(topbar)
-            for k,v in options.items():
+            for k,v in self.options.items():
                 print(f'{self.color}  │\033[m {v[0]:<20}{v[1]:<15}{v[2]:<38}{self.color}│\033[m')
             print(bottombar)
             print(modebar)
@@ -116,22 +129,23 @@ if __name__ == '__main__':
             print(bottombar)
 
         def parser(self):
-            parser = argparse.ArgumentParser(add_help=False, formatter_class=argparse.RawTextHelpFormatter)
+            parser = argparse.ArgumentParser(add_help=False, formatter_class=argparse.RawTextHelpFormatter, description='Transrate2')
             parser.add_argument('--assembly', '-a', type=str , help='Assembly file')
             parser.add_argument('--left', '-l', type=str , help='Left reads file')
             parser.add_argument('--right', '-r', type=str , help='Right reads file')
             parser.add_argument('--reference', '-f', type=str , help='Reference file')
             parser.add_argument('--output', '-o', type=str , help='Output directory')
             parser.add_argument('--threads', '-t', type=int , help='Number of threads')
-            parser.add_argument('--STAR', '-s', action='store_true', help='Use STAR aligner')
-            parser.add_argument('--SNAP', '-p', action='store_true', help='Use SNAP aligner (default)')
+            parser.add_argument('--star', '-s', action='store_true', help='Use STAR aligner (default)')
+            parser.add_argument('--snap', '-p', action='store_true', help='Use Snap aligner')
+            parser.add_argument('--bowtie2', '-b', action='store_true', help='Use Bowtie2 aligner')
             parser.add_argument('--clutter', '-c', action='store_true', help='Remove clutter from output directory')
             parser.add_argument('--help', '-h', action='store_true', help='Display this help message')
             parser.add_argument('--quiet', '-q', action='store_true', help='Supress terminal output')
             parser.add_argument('--skip', '-k', action='store_true', help='Skip to transrate')
 
             args = parser.parse_args()
-
+            
 
             def get_term(self):
                 term = os.environ.get('TERM')
@@ -171,11 +185,11 @@ if __name__ == '__main__':
                 print('')
 
             if args.help:
-                self.logoprint()
+                self.logoprint(args.star, args.bowtie2)
                 self.helpoptions()
                 sys.exit()
 
-            elif len(sys.argv) != 1:
+            elif len(sys.argv) > 2:
 
                 self.quiet = args.quiet if args.quiet else False
 
@@ -190,6 +204,11 @@ if __name__ == '__main__':
                     transrate_start.MULTASSEMBLY = True
                 self.clean                   = transrate_start.__dict__
 
+                if args.star + args.bowtie2 + args.snap > 1:
+                    self.logoprint(args.star, args.bowtie2)
+                    self.aligners()
+                    sys.exit()
+
                 for x in transrate_start.ASSEMBLYLIST:
                     self.color = self.colors[self.colorcount]
                     transrate_start.__dict__  = self.clean
@@ -202,13 +221,16 @@ if __name__ == '__main__':
                     transrate_start.THREADS   = args.threads if args.threads else 1
                     transrate_start.OUTDIR    = args.output if args.output else ''
                     transrate_start.CLUTTER   = args.clutter if args.clutter else False
-                    transrate_start.STAR      = args.STAR if args.STAR else False
+                    transrate_start.STAR      = False if any([args.snap, args.bowtie2]) else True
+                    transrate_start.BT2       = args.bowtie2 if args.bowtie2 else False
+                    transrate_start.SNAP      = args.snap if args.snap else False
                     transrate_start.QUIET     = args.quiet if args.quiet else False
                     transrate_start.LOGOCOLOR = self.color
+
                     self.colorcount += 1
                     if self.colorcount == 3:
                         self.colorcount = 0
-                    self.logoprint()
+                    self.logoprint(args.star, args.bowtie2)
                     if self.reqs:
                         sys.exit()
                     parameters()
@@ -217,7 +239,7 @@ if __name__ == '__main__':
                         pass
                     time.sleep(1)
             else:
-                self.logoprint()
+                self.logoprint(args.star, args.bowtie2)
                 self.helpoptions()
                 sys.exit()
 
