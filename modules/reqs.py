@@ -26,7 +26,7 @@ def req_check(star = False, bt2 = False):
         return len(stdout.decode('utf-8')) > 0
 
     for t in tools:
-        if not tool_installed(t):
+        if not tool_installed(t.lower()):
             missing.append(t)
 
     if len(missing) > 0:
