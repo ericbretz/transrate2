@@ -80,20 +80,26 @@ if __name__ == '__main__':
 
             modebar = f'{self.color}  ┌{"─" * 28}\033[m    Mode Types    {self.color}{"─" * 28}┐\033[m'
             extrabar = f'{self.color}  ┌{"─" * 28}\033[m     #Threads     {self.color}{"─" * 28}┐\033[m'
-            self.options = {
+            self.options = {'Assembly': {
                 'Assembly'        : ['--assembly', '-a', 'Path to assembly file (FASTA)'],
                 'Left Reads'      : ['--left', '-l', 'Path to left reads file (FASTQ)'],
                 'Right Reads'     : ['--right', '-r', 'Path to right reads file (FASTQ)'],
                 'Reference'       : ['--reference', '-f', 'Path to reference file (FASTA)'],
                 'Output Directory': ['--outdir', '-o', 'Path to output directory'],
                 'Threads'         : ['--threads', '-t', 'Number of threads to use'],
+            },
+            'Aligners': {
                 'STAR'            : ['--star', '-s', 'Use STAR aligner (default)'],
                 'Snap'            : ['--snap', '-p', 'Use Snap aligner'],
                 'Bowtie2'         : ['--bowtie2', '-b', 'Use Bowtie2 aligner'],
+            },
+            'Others': {
                 'Clutter'         : ['--clutter', '-c', 'Remove intermediate files'],
                 'Quiet'           : ['--quiet', '-q', 'Supress terminal output'],
                 'Help'            : ['--help', '-h', 'Display this help message']
             }
+            }
+
             modes = {
                 'Assembly' : ['-a', 'Run assembly analysis only.'],
                 'Reads'    : ['-a -l -r', 'Run assembly with paired-end reads analysis'],
@@ -104,8 +110,17 @@ if __name__ == '__main__':
 
 
             print(topbar)
+            # for k,v in self.options.items():
+            #     print(f'{self.color}  │\033[m {v[0]:<20}{v[1]:<15}{v[2]:<38}{self.color}│\033[m')
+            print(f'{self.color}  │\033[m {" " * 73}{self.color}│\033[m')
             for k,v in self.options.items():
-                print(f'{self.color}  │\033[m {v[0]:<20}{v[1]:<15}{v[2]:<38}{self.color}│\033[m')
+                cat_len = int((70 - len(k)) / 2)
+                print(f'{self.color}  ├{"┄"* cat_len}\033[m  {k}  {self.color}{"┈" * cat_len}┤\033[m')
+                print(f'{self.color}  │\033[m {" " * 73}{self.color}│\033[m')
+                for x,y in v.items():
+                    xlen = 43 - len(str(y[2]))
+                    print(f'{self.color}  │\033[m {y[0]:<20}{y[1]:<10}{y[2]}{" " * xlen}{self.color}│\033[m')
+                print(f'{self.color}  │\033[m {" " * 73}{self.color}│\033[m')
             print(bottombar)
             print(modebar)
             for k,v in modes.items():
@@ -230,7 +245,7 @@ if __name__ == '__main__':
                     self.colorcount += 1
                     if self.colorcount == 3:
                         self.colorcount = 0
-                    self.logoprint(args.star, args.bowtie2)
+                    self.logoprint(args.star, args.bowtie2) if self.assemblycount == 0 else None
                     if self.reqs:
                         sys.exit()
                     parameters()
