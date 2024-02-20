@@ -7,23 +7,23 @@ Quality analysis for de-novo transcriptome assemblies</p>
 TransRate2 is a reimplementation of the original bioinformatics tool, TransRate (Smith-Unna et al. 2015).<br>
 https://github.com/blahah/transrate
 
+> [!CAUTION]
+> $\Huge\textcolor[RGB]{248, 82, 73}{\textsf{TransRate2 is currently under development}}$
+
 ## Usage/Examples
 
 <code>transrate2</code> <code>-a</code> ASSEMBLY.fa <code>-l</code> LEFT.fq <code>-r</code> RIGHT.fq <code>-f</code> REFERENCE.fa <code>-o</code> OUTDIR <code>-t</code> THREADS <br>
 <code>transrate2</code> <code>--help</code>
 
-$$\Huge\textcolor{yellow}{\textsf{Under Development}}$$
-
 ## Requirements
-<b>Salmon</b>&emsp;&emsp;&emsp;&emsp;https://github.com/COMBINE-lab/salmon<br>
-
-<b>Snap-aligner</b>&emsp;&nbsp;https://github.com/amplab/snap<br>
-
-<b>STAR</b> (optional)&nbsp;https://github.com/alexdobin/STAR<br>
-
-<b>Samtools</b>&emsp;&emsp;&emsp;https://github.com/samtools/samtools<br>
-
-<b>Diamond</b>&emsp;&emsp;&emsp;https://github.com/bbuchfink/diamond
+| Package | Repo <img width=400px></img>|
+| :--- | :--- |
+| **Salmon** | https://github.com/COMBINE-lab/salmon |
+| **STAR** | https://github.com/alexdobin/STAR |
+| **Bowtie2** _<sub>(optional)</sub>_ | https://github.com/BenLangmead/bowtie2 |
+| **Snap** _<sub>(optional)</sub>_ | https://github.com/amplab/snap |
+| **Samtools** | https://github.com/samtools/samtools |
+| **Diamond** | https://github.com/bbuchfink/diamond |
 
 ## Bug Reporting
 Please report bugs in the <a href="https://github.com/ericbretz/transrate2/issues">Issue Tracker</a>
