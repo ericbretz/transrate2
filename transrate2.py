@@ -19,6 +19,7 @@ if __name__ == '__main__':
             self.quiet         = False
             self.reqs          = False
             self.options       = {}
+            self.version       = False
             
             try:
                 url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
@@ -96,7 +97,8 @@ if __name__ == '__main__':
             'Others': {
                 'Clutter'         : ['--clutter', '-c', 'Remove intermediate files'],
                 'Quiet'           : ['--quiet', '-q', 'Supress terminal output'],
-                'Help'            : ['--help', '-h', 'Display this help message']
+                'Help'            : ['--help', '-h', 'Display this help message'],
+                'Version'         : ['--version', '-v', 'Display version'],
             }
             }
 
@@ -158,8 +160,13 @@ if __name__ == '__main__':
             parser.add_argument('--help', '-h', action='store_true', help='Display this help message')
             parser.add_argument('--quiet', '-q', action='store_true', help='Supress terminal output')
             parser.add_argument('--skip', '-k', action='store_true', help='Skip to transrate')
+            parser.add_argument('--version', '-v', action='store_true', help='Display version')
 
             args = parser.parse_args()
+
+            if args.version:
+                print(f'{__init__.__version__}')
+                sys.exit()
             
 
             def get_term(self):
