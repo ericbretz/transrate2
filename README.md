@@ -2,7 +2,7 @@
 <picture><img src="https://i.imgur.com/ksFvFqp.png"
      alt="TransRate 2.0.5"/><br></picture>
 Quality analysis for de-novo transcriptome assemblies</p>
-<p align="center"><a href="#"><img alt="GitHub Tag" src="https://img.shields.io/github/v/tag/ericbretz/transrate2?style=flat-square"></a> <a href="#"><img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/ericbretz/transrate2/total?style=flat-square"></a></p>
+<p align="center"><a href="#"><img alt="GitHub Tag" src="https://img.shields.io/github/v/tag/ericbretz/transrate2?style=flat-square"></a></p>
 
 TransRate2 is a reimplementation of the original bioinformatics tool, TransRate (Smith-Unna et al. 2015).<br>
 https://github.com/blahah/transrate
