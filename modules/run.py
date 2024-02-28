@@ -27,6 +27,9 @@ class MAIN:
         self.QUIET        = False
         self.SINGLE       = ''
         self.SKIP         = False
+        self.outputthread = None
+        self.ERROR        = False
+        self.STOPPED      = False
 
         #### Paths ####
         self.OUTDIR     = ''
@@ -195,6 +198,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('bowtie2_index', 'end')
+        if bt2_index_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Bowtie2 Index Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True        
 
     def bowtie2(self):
@@ -228,6 +239,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('bowtie2', 'end')
+        if bt2_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Bowtie2 Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def star_index(self):
@@ -244,6 +263,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('star_index', 'end')
+        if star_index_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('STAR Index Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def star(self):
@@ -266,6 +293,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('star', 'end')
+        if star_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('STAR Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
 
@@ -283,6 +318,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('snap_index', 'end')
+        if snap_index_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Snap Index Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def snap(self):
@@ -303,6 +346,14 @@ class MAIN:
             snapout_f.write(stdout.decode('utf-8'))
         self.log_write(stdout, stderr)
         self.log_time('snap_paired', 'end')
+        if snap_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Snap Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def salmon(self):
@@ -318,6 +369,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('salmon_quant', 'end')
+        if salmon_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Salmon Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def samtools_sort(self):
@@ -333,6 +392,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('samtools_sort', 'end')
+        if samtools_sort_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Samtools Sort Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def samtools_index(self):
@@ -346,6 +413,14 @@ class MAIN:
 
         self.log_write(stdout, stderr)
         self.log_time('samtools_index', 'end')
+        if samtools_index_run.returncode != 0:
+            self.ERROR = True
+            while not self.STOPPED:
+                pass
+            print('\n')
+            print('Samtools Index Failed')
+            print(f'Check Logs at {self.LOGDIR}')
+            sys.exit()
         self.STAGEDONE = True
 
     def transrate(self):
@@ -417,10 +492,7 @@ class MAIN:
         self.log_time('reference', 'start')
         self.log_set('reference')
         self.STAGE = 'Reference'
-        if self.LEFT and self.RIGHT:
-            assemblies = f'{self.RDIR}/transrate/assembly.csv'
-        else:
-            assemblies = f'{self.OUTDIR}/transrate/assembly.csv'
+        assemblies = f'{self.RDIR}/assembly.csv'
 
         reference.reference(self.ASSEMBLY, self.REFERENCE, assemblies, self.RDIR, self.THREADS)
 
@@ -436,13 +508,13 @@ class MAIN:
         self.dir_set()
         self.BASE = os.path.basename(self.ASSEMBLY).split('.')[0]
         if not self.QUIET:
-            outputthread = threading.Thread(target=self.output)
+            self.outputthread = threading.Thread(target=self.output)
         self.output_make()
         
         if self.LEFT or self.RIGHT:
             self.path_check()
             self.pair_check()
-            outputthread.start() if not self.QUIET else None
+            self.outputthread.start() if not self.QUIET else None
             if not self.SKIP:
                 if self.STAR:
                     self.star_index()
@@ -464,7 +536,7 @@ class MAIN:
             self.assembly()
         else:
             self.path_check()
-            outputthread.start() if not self.QUIET else None
+            self.outputthread.start() if not self.QUIET else None
             self.assembly()
             self.csv_solo()
             
@@ -513,6 +585,7 @@ class MAIN:
     def output(self):
         while not self.STARTED:
             pass
+
         stage = self.STAGE
 
         def color_change():
@@ -550,6 +623,10 @@ class MAIN:
             self.LOGDCT[key] = {}
             self.LOGDCT[key]['start'] = time.perf_counter()
             while not self.STAGEDONE:
+                if self.ERROR:
+                    self.STOPPED = True
+                    sys.exit()
+                    
                 print(spinner(stage), end='\r')
                 if key == stage.lower().replace(' ', '_'):
                     time.sleep(0.2)
@@ -574,6 +651,10 @@ class MAIN:
             self.LOGDCT['transrate']['start'] = time.perf_counter()
             print(f' {self.LOGOCOLOR}░\033[m Transrate Running')
             while self.STAGE == 'transrate' or not printed:
+                if self.ERROR:
+                    self.STOPPED = True
+                    sys.exit()
+                    
                 if self.RSTAGE != prevrstage:
                     out = f' {self.LOGOCOLOR}░\033[m {prevrdesc}'
                     xlen = 60 - len((str(out)))
@@ -767,14 +848,11 @@ class MAIN:
             self.SOLOSTATS = False
 
         def ref():
-            reflabel = f'{self.LOGOCOLOR}  ┌{"─" * 20}\033[m  Reference Statistics  {self.LOGOCOLOR}{"─" * 20}┐\033[m'
+            reflabel = f'{self.LOGOCOLOR}  ┌{"─" * 25}\033[m  Reference Statistics  {self.LOGOCOLOR}{"─" * 25}┐\033[m'
             clear = ' ' * 66
             print(clear)
             print(reflabel)
-            if self.LEFT and self.RIGHT:
-                assemblies = pd.read_csv(self.RDIR + '/transrate/assembly.csv').to_dict()
-            else:
-                assemblies = pd.read_csv(self.OUTDIR + '/transrate/assembly.csv').to_dict()
+            assemblies = pd.read_csv(self.RDIR + '/assembly.csv').to_dict()
 
             refs = {
                 'CRBB_hits' : 'CRBB Hits',
