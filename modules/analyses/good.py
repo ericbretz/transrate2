@@ -51,8 +51,6 @@ def process_task(args):
     return tmp_dct
 
 def good(bamfile, bamdct, threads, single):
-    if single:
-        return bamdct
     count    =  0
     name     =  ''
     prev     =  ''

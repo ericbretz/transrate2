@@ -16,14 +16,11 @@ def process_task(args):
     for ref in refs:
         uncovered = bamdct[ref]['coverage']['bases']
         pnotseg = setPNotSegmented(len(uncovered), uncovered, 0.7)
-        tmp_dct[ref]['stats']['p_notsegmented'] = round(pnotseg, 6)
+        tmp_dct[ref]['stats']['p_notsegmented'] = round(pnotseg, 4)
 
     return tmp_dct
 
 def sgmt(bamfile, bamdct, threads, single):
-    if single:
-        return bamdct
-
     with Pool(threads) as p:
         results = p.map(process_task, [[i, bamfile, threads, bamdct] for i in range(threads)])
 

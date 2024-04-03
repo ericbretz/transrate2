@@ -1,4 +1,4 @@
-from modules.hit import Hit
+from modules.analyses.hit import Hit
 import sys
 import subprocess
 import os
@@ -6,14 +6,14 @@ import math
 import csv
 import pandas as pd
 
-class RECIP:
+class REFERENCE:
 
-    def __init__(self):
+    def __init__(self, main):        
         # file paths
         self.q2p_blast      = ''
         self.p2q_blast      = ''
-        self.fasta_f        = ''
-        self.prot_f         = ''
+        self.fasta_f        = main.ASSEMBLY
+        self.prot_f         = main.REFERENCE_FILE
         self.reference      = {}
         # seq_count
         self.seqs           = 0
@@ -41,10 +41,25 @@ class RECIP:
         self.contig_hits    = 0
         self.has_crb        = {}
 
-        self.assemblycsv    = ''
-        self.output         = ''
+        self.assemblycsv    = main.ASSEMBLY_FILE
+        self.output         = main.TRANSRATE_PATH
         self.fa_translated  = ''
-        self.threads        = 1
+        self.threads        = main.THREADS
+        self.multi          = main.ASSEMBLY_MULTI
+        self.rh_name        = ''.join(os.path.basename(self.fasta_f).split('.')[:-1])
+
+    #### RUN ####
+    def run(self):
+        self.diamond()
+        self.seq_count()
+        self.load_outputs()
+        self.find_reciprocals()
+        self.find_secondaries()
+        self.reference_hits()
+        self.rbh()
+        self.ref_coverage()
+        self.write_output()
+
 
     #### CRBBLAST ####
 
@@ -222,8 +237,14 @@ class RECIP:
         return hits
     
     def write_output(self):
+        for k,v in self.comp_stats.items():
+            if type(v) == float:
+                self.comp_stats[k] = round(v, 4)
+            else:
+                self.comp_stats[k] = int(v)
         s = ""
-        with open(f'{self.output}/reciprocal_hits.csv', "w") as f:
+        rhfile = f'{self.output}/reciprocal_hits.csv' if not self.multi else f'{self.output}/{self.rh_name}_reciprocal_hits.csv'
+        with open(rhfile, "w") as f:
             if self.reciprocals is not None:
                 s += "query\ttarget\tid\talnlen\tevalue\tbitscore\t"
                 s += "qstart..qend\ttstart..tend\tqlen\ttlen\n"
@@ -231,11 +252,17 @@ class RECIP:
                     for hit in hits:
                         s += f"{hit['query']}\t{hit['target']}\t{hit['id']}\t{hit['alnlen']}\t{hit['evalue']}\t{hit['bitscore']}\t{hit['qstart']}..{hit['qend']}\t{hit['tstart']}..{hit['tend']}\t{hit['qlen']}\t{hit['tlen']}\n"
                 f.write(s)
-        if self.assemblycsv:
-            df = pd.DataFrame([self.comp_stats])
-            existing_df = pd.read_csv(self.assemblycsv)
-            merged_df = pd.concat([existing_df, df], axis=1)
-            merged_df.to_csv(self.assemblycsv, index=False)
+        # if self.assemblycsv:
+        df = pd.DataFrame([self.comp_stats])
+        existing_df = pd.read_csv(self.assemblycsv)
+        existing_bottom = existing_df.iloc[-1]
+        if existing_df.shape[0] > 1:
+            existing_bottom[df.columns] = df.values[0]
+            existing_df.iloc[-1] = existing_bottom
+        else:
+            existing_df = pd.concat([existing_df, df], axis=1)
+        existing_df.to_csv(self.assemblycsv, index=False)
+        os.remove(self.fa_translated)
         
     #### COMPARITIVE METRICS ####
     
@@ -422,40 +449,7 @@ class RECIP:
             blastp_pid = blastp.pid
             blastp.communicate()
 
-        # make_prot_db = subprocess.Popen(prot_db, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        # stdout, stderr = make_prot_db.communicate()
-        # make_prot_db_pid = make_prot_db.pid
-        
 
-        # make_query_db = subprocess.Popen(query_db, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        # stdout, stderr = make_query_db.communicate()
-        # make_query_db_pid = make_query_db.pid
-
-        # blastx = subprocess.Popen(blastx, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        # stdout, stderr = blastx.communicate()
-        # blastx_pid = blastx.pid
-
-        # blastp = subprocess.Popen(blastp, stdout=subprocess.PIPE, stderr=subprocess.PIPE, preexec_fn=os.setsid)
-        # stdout, stderr = blastp.communicate()
-        # blastp_pid = blastp.pid
-
-def reference(faf, pf, assemlbycsv, output, threads):
-    recip = RECIP()
-    recip.fasta_f      = faf
-    recip.prot_f       = pf
-    recip.assemblycsv  = assemlbycsv
-    recip.output       = output
-    recip.threads      = threads
-    
-    recip.diamond()
-    recip.seq_count()
-    recip.load_outputs()
-    recip.find_reciprocals()
-    recip.find_secondaries()
-    recip.reference_hits()
-    recip.rbh()
-    recip.ref_coverage()
-    recip.write_output()
 
 
 
