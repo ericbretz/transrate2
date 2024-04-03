@@ -20,8 +20,14 @@ def file(bamfile, bamdct, threads, single):
                     'p_notsegmented': 0.0
                 },
                 'seq': {
-                    'true'          : 0,
-                    'count'         : 0
+                    'true'                : 0,
+                    'count'               : 0,
+                    'softclipped'         : 0,
+                    'softclipped_length'  : 0,
+                    'total_length'        : 0,
+                    'total_reads'         : 0,
+                    'p_softclipped'       : 0.0,
+                    'p_softclipped_length': 0.0
                 },
                 'good': {
                     'fragments'     : [],
@@ -37,7 +43,7 @@ def file(bamfile, bamdct, threads, single):
                     'bases'         : [],
                     'length'        : 0,
                     'covered'       : [0] * bam.get_reference_length(ref)
-                }} if not single else {'stats': {
+                }} if single == 2 else {'stats': {
                     'name'          : ref,
                     'p_seqtrue'     : 0.0,
                     'length'        : bam.get_reference_length(ref),
@@ -46,7 +52,13 @@ def file(bamfile, bamdct, threads, single):
                 },
                 'seq': {
                     'true'          : 0,
-                    'count'         : 0
+                    'count'         : 0,
+                    'softclipped'   : 0,
+                    'softclipped_length': 0,
+                    'total_length'  : 0,
+                    'total_reads'   : 0,
+                    'p_softclipped' : 0.0,
+                    'p_softclipped_length': 0.0
                 },
                 'coverage': {
                     'ranges_init'   : [],

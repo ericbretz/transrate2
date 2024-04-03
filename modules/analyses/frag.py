@@ -15,7 +15,7 @@ def process_task(args):
         for fetch in bam.fetch(reference=ref):
             try:
                 name_r = fetch.reference_name
-                if not single:
+                if single == 2:
                     if (fetch.is_read1 and fetch.is_mapped) or (fetch.is_read2 and not fetch.mate_is_mapped):
                         tmp_dct[name_r]['stats']['fragments'] += 1
                     if fetch.is_read1 and fetch.is_paired:
@@ -29,7 +29,7 @@ def process_task(args):
                     if fetch.is_mapped:
                         tmp_dct[name_r]['stats']['fragments'] += 1
             except:
-                continue
+                pass
 
     return tmp_dct
 

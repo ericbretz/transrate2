@@ -1,271 +1,315 @@
 import __init__
 import sys
-import argparse
-import time
-import psutil
-import requests
 import os
+import argparse
+import psutil
 from modules.run import MAIN
-from modules.reqs import req_check
+from modules.terminal.reqs import req_check
+from modules.terminal.logo import Logo
+from modules.terminal.helpoptions import Help
+from modules.terminal.path import PathCheck
 
-if __name__ == '__main__':
-    class PARSER:
+
+if __name__ == "__main__":
+    class Parser:
         def __init__(self):
-            self.color         = ''
-            self.assemblycount = 0
-            self.clean         = {}
-            self.colors        = ['\033[0;33m', '\033[0;31m', '\033[0;32m']
-            self.colorcount    = 0
-            self.quiet         = False
-            self.reqs          = False
-            self.options       = {}
-            self.version       = False
-            
-            try:
-                url = 'https://api.github.com/repos/ericbretz/transrate2/releases'
-                header = {'Accept': 'application/vnd.github+json'}
-                response = requests.get(url, headers=header)
-                self.latest = response.json()[0]['tag_name']
-            except:
-                self.latest = ''
+            #### Info ####
+            self.version     = __init__.__version__
+            self.author      = __init__.__author__
+            self.description = __init__.__description__
 
-        def logoprint(self, star = False, bowtie2 = False):
-            if self.quiet:
-                return
-            
-            C = self.colors[0]
-            H = '\033[m'
-            self.color = C
-            W = '\033[37m'
-            
-            rversion = f'v{__init__.__version__}'
-            
-            if self.latest:
-                if self.latest != __init__.__version__:
-                    rversion = f'{rversion} (Update Available: {self.latest})'
-            else:
-                pass
+            #### Settings ####
+            self.quiet       = False
+            self.skip        = False
+            self.plot        = False
+            self.clutter     = False
+            self.bam         = False
+            self.threads     = 1
 
-            B = '\033[0;32m'
-            A = '\033[0;33m'
-            C = '\033[0;31m'
-            W = '\033[m'
-            transrate_c = f'''
- {B}██████{W}┐{B}██████{W}┐  {B}█████{W}┐ {B}███{W}┐  {B}██{W}┐ {B}██████{W}┐{A}██████{W}┐  {A}█████{W}┐ {A}██████{W}┐{A}███████{W}┐{C}██████{W}┐ 
- └─{B}██{W}┌─┘{B}██{W}┌──{B}██{W}┐{B}██{W}┌──{B}██{W}┐{B}████{W}┐ {B}██{W}│{B}██{W}┌────┘{A}██{W}┌──{A}██{W}┐{A}██{W}┌──{A}██{W}┐└─{A}██{W}┌─┘{A}██{W}┌────┘└────{C}██{W}┐
-   {B}▓▓{W}│  {B}▓▓▓▓▓▓{W}┌┘{B}▓▓▓▓▓▓▓{W}│{B}▓▓{W}┌{B}▓▓{W}┐{B}▓▓{W}│└{B}▓▓▓▓▓{W}┐ {A}▓▓▓▓▓▓{W}┌┘{A}▓▓▓▓▓▓▓{W}│  {A}▓▓{W}│  {A}▓▓▓▓▓{W}┐    {C}▓▓▓{W}┌─┘
-   {B}▒▒{W}│  {B}▒▒{W}┌──{B}▒▒{W}┐{B}▒▒{W}┌──{B}▒▒{W}│{B}▒▒{W}│└{B}▒▒▒▒{W}│ └───{B}▒▒{W}┐{A}▒▒{W}┌──{A}▒▒{W}┐{A}▒▒{W}┌──{A}▒▒{W}│  {A}▒▒{W}│  {A}▒▒{W}┌──┘  {C}▒▒{W}┌──┘  
-   {B}░░{W}│  {B}░░{W}│  {B}░░{W}│{B}░░{W}│  {B}░░{W}│{B}░░{W}│ └{B}░░░{W}│{B}░░░░░░{W}┌┘{A}░░{W}│  {A}░░{W}│{A}░░{W}│  {A}░░{W}│  {A}░░{W}│  {A}░░░░░░░{W}┐{C}░░░░░░░{W}┐
- {W}  └─┘  └─┘  └─┘└─┘  └─┘└─┘  └──┘└─────┘ └─┘  └─┘└─┘  └─┘  └─┘  └──────┘└──────┘
-{W}{"Quality analysis for de-novo transcriptome assemblies":^80}
-{W}             {B}░▓▓▓▓▓▓▓◠▓▓▓▓▓▓▓░ {A}░▓▓▓▓▓▓▓◠▓▓▓▓▓▓▓░ {C}░▓▓▓▓▓▓▓◠▓▓▓▓▓▓▓░ {W}   EC Bretz
-{W}{rversion:>78}\033[0m
-'''
+            #### Args ####
+            self.args = None
 
-            print(transrate_c)
-            self.reqs = req_check(star, bowtie2)
+            #### Prints ####
+            self.logo        = Logo(self.version).logo
+            self.helpblocks  = Help()
 
-        def aligners(self):
-            print(f'{self.color}  ┌{"─" * 27}\033[m    Aligner Error   {self.color}{"─" * 27}┐\033[m')
-            print(f'{self.color}  │ \033[m Please choose only one aligner to use.{self.color}{" " * 34}│\033[m')
-            print(f'{self.color}  │  •\033[m STAR    (-s) is the default aligner.{self.color}{" " * 34}│\033[m')
-            print(f'{self.color}  │  •\033[m Snap    (-p){" " * 58}{self.color}│\033[m')
-            print(f'{self.color}  │  •\033[m Bowtie2 (-b){" " * 58}{self.color}│\033[m')
-            print(f'{self.color}  │ \033[m Or use (--help) for more options.{self.color}{" " * 39}│\033[m')
-            print(f'{self.color}  └{"─" * 74}┘\033[m')
-
-        def helpoptions(self):
-
-            topbar = f'{self.color}  ┌{"─" * 28}\033[m   Help Options   {self.color}{"─" * 28}┐\033[m'
-            bottombar = f'{self.color}  └{"─" * 74}┘\033[m'
-
-            modebar = f'{self.color}  ┌{"─" * 28}\033[m    Mode Types    {self.color}{"─" * 28}┐\033[m'
-            extrabar = f'{self.color}  ┌{"─" * 28}\033[m     #Threads     {self.color}{"─" * 28}┐\033[m'
-            self.options = {'Assembly': {
-                'Assembly'        : ['--assembly', '-a', 'Path to assembly file (FASTA)'],
-                'Left Reads'      : ['--left', '-l', 'Path to left reads file (FASTQ)'],
-                'Right Reads'     : ['--right', '-r', 'Path to right reads file (FASTQ)'],
-                'Reference'       : ['--reference', '-f', 'Path to reference file (FASTA)'],
-                'Output Directory': ['--outdir', '-o', 'Path to output directory'],
-                'Threads'         : ['--threads', '-t', 'Number of threads to use'],
-            },
-            'Aligners': {
-                'STAR'            : ['--star', '-s', 'Use STAR aligner (default)'],
-                'Snap'            : ['--snap', '-p', 'Use Snap aligner'],
-                'Bowtie2'         : ['--bowtie2', '-b', 'Use Bowtie2 aligner'],
-            },
-            'Others': {
-                'Clutter'         : ['--clutter', '-c', 'Remove intermediate files'],
-                'Quiet'           : ['--quiet', '-q', 'Supress terminal output'],
-                'Help'            : ['--help', '-h', 'Display this help message'],
-                'Version'         : ['--version', '-v', 'Display version'],
+            #### Terminal Colors ####
+            self.colors = {
+                'red'   : '\033[0;31m',
+                'green' : '\033[0;32m',
+                'yellow': '\033[0;33m',
+                'blue'  : '\033[0;34m',
+                'purple': '\033[0;35m',
+                'cyan'  : '\033[0;36m',
+                'white' : '\033[0;37m',
+                'reset' : '\033[0m'
             }
-            }
+            self.term_colors = [self.colors['yellow'], self.colors['red'], self.colors['green']]
+            self.color       = self.colors['yellow']
+            self.reset  = self.colors['reset']
 
-            modes = {
-                'Assembly' : ['-a', 'Run assembly analysis only.'],
-                'Reads'    : ['-a -l -r', 'Run assembly with paired-end reads analysis'],
-                'All'      : ['-a -l -r -f', 'Run assembly with paired-end reads and reference'],
-                'Single'   : ['-a -l', 'Run assembly with single-end reads analysis'],
-                'Reference': ['-a -f', 'Run assembly with reference analysis'],
-            }
+            #### Assembly Info ####
+            self.assembly_count = 0
+            self.assembly_run   = 1
+            self.assembly_name  = ''
+            self.assembly_base  = ''
+            self.assembly_multi = False
+            self.assembly_list  = []
 
+            #### Read Info ####
+            self.singleend   = False
+            self.single      = None
+            self.pairedend   = False
+            self.solo        = False
 
-            print(topbar)
-            # for k,v in self.options.items():
-            #     print(f'{self.color}  │\033[m {v[0]:<20}{v[1]:<15}{v[2]:<38}{self.color}│\033[m')
-            print(f'{self.color}  │\033[m {" " * 73}{self.color}│\033[m')
-            for k,v in self.options.items():
-                cat_len = int((70 - len(k)) / 2)
-                print(f'{self.color}  ├{"┄"* cat_len}\033[m  {k}  {self.color}{"┈" * cat_len}┤\033[m')
-                print(f'{self.color}  │\033[m {" " * 73}{self.color}│\033[m')
-                for x,y in v.items():
-                    xlen = 43 - len(str(y[2]))
-                    print(f'{self.color}  │\033[m {y[0]:<20}{y[1]:<10}{y[2]}{" " * xlen}{self.color}│\033[m')
-                print(f'{self.color}  │\033[m {" " * 73}{self.color}│\033[m')
-            print(bottombar)
-            print(modebar)
-            for k,v in modes.items():
-                body = f'{self.color}  │\033[m {v[0]:<20}{v[1]:<5}{self.color}'
-                length = 94 - len(str(body))
-                print(f'{body}{" " * (length)}│\033[m')
-            print(bottombar)
+            #### Aligner Info ####
+            self.aligner     = None
 
-            print(extrabar)
-            logical = psutil.cpu_count(logical=True)
-            physical = psutil.cpu_count(logical=False)
-            threadslabel = f'{self.color}  │\033[m Threads: {self.color}'
-            logbody = f'{self.color}  │\033[m     Logical:  '
-            physbody = f'{self.color}  │\033[m     Physical: '
-            threalen = 94 - len(str(threadslabel))
-            loglen = 87 - len(str(logbody)) - len(str(logical))
-            physlen = 87 - len(str(physbody)) - len(str(physical))
-            print(f'{threadslabel}{self.color}{" " * threalen}│\033[m')
-            print(f'{logbody}{logical}{" " * loglen}{self.color}│\033[m')
-            print(f'{physbody}{physical}{" " * physlen}{self.color}│\033[m')
-            print(bottombar)
+            #### Output Info ####
+            self.output      = None
 
-        def parser(self):
+            #### Initiate ####
+            # Parse arguments
+            self.parse()
+            # Check requirements
+            self.check_requirements()
+            # Check for multiple assemblies
+            self.assembly_counter()
+            # Set color
+            self.color_iter()
+            # Check for multiple aligners
+            self.aligners()
+            # Check for valid paths
+            self.path_check()
+            # Check for valid threads
+            self.thread_check()
+            # Run
+            self.run()
+
+        def parse(self):
+            ############ Arguments ##################################
+            # --assembly, -a: Assembly file                         #
+            # --left, -l: Left reads file                           #
+            # --right, -r: Right reads file                         #
+            # --reference, -f: Reference file                       #
+            # --bam, -m: Bam file                                   #
+            # --output, -o: Output directory                        #
+            # --threads, -t: Number of threads                      #
+            # --star, -s: Use STAR aligner (default)                #
+            # --snap, -p: Use Snap aligner                          #
+            # --bowtie2, -b: Use Bowtie2 aligner                    #
+            # --clutter, -c: Remove clutter from output directory   #
+            # --help, -h: Display this help message                 #
+            # --quiet, -q: Supress terminal output                  #
+            # --plot, -P: Create .png plots of results              #
+            # --skip, -k: Skip to transrate                         #
+            # --version, -v: Display version                        #
+            #########################################################
+
             parser = argparse.ArgumentParser(add_help=False, formatter_class=argparse.RawTextHelpFormatter, description='Transrate2')
             parser.add_argument('--assembly', '-a', type=str , help='Assembly file')
             parser.add_argument('--left', '-l', type=str , help='Left reads file')
             parser.add_argument('--right', '-r', type=str , help='Right reads file')
             parser.add_argument('--reference', '-f', type=str , help='Reference file')
+            parser.add_argument('--bam', '-m', type=str , help='Bam file')
             parser.add_argument('--output', '-o', type=str , help='Output directory')
             parser.add_argument('--threads', '-t', type=int , help='Number of threads')
-            parser.add_argument('--star', '-s', action='store_true', help='Use STAR aligner (default)')
+            parser.add_argument('--star', '-s', action='store_true', default=False, help='Use STAR aligner (default)')
             parser.add_argument('--snap', '-p', action='store_true', help='Use Snap aligner')
             parser.add_argument('--bowtie2', '-b', action='store_true', help='Use Bowtie2 aligner')
             parser.add_argument('--clutter', '-c', action='store_true', help='Remove clutter from output directory')
             parser.add_argument('--help', '-h', action='store_true', help='Display this help message')
             parser.add_argument('--quiet', '-q', action='store_true', help='Supress terminal output')
+            parser.add_argument('--plot', '-P', action='store_true', help='Create .png plots of results')
             parser.add_argument('--skip', '-k', action='store_true', help='Skip to transrate')
             parser.add_argument('--version', '-v', action='store_true', help='Display version')
 
-            args = parser.parse_args()
+            self.args = parser.parse_args()
 
-            if args.version:
+            # Print help message
+            if self.args.help or len(sys.argv) < 2:
+                print(f'{self.logo}')
+                print(f'{self.helpblocks}')
+                sys.exit()
+
+            # Print version
+            if self.args.version:
                 print(f'{__init__.__version__}')
                 sys.exit()
-            
 
-            def get_term(self):
-                term = os.environ.get('TERM')
-                if 'xterm' in term:
-                    return True
-                else:
-                    return False
-                
-            def parameters():
-                if self.quiet:
-                    return
-                topbar = f'{self.color}  ┌{"─" * 74}┐\033[m'
-                bottombar = f'{self.color}  └{"─" * 74}┘\033[m'
-                print(topbar)
-                if self.assemblytotal > 1:
-                    y = 38 - len(str(self.assemblycount + 1)) - len(str(self.assemblytotal))
-                    print(f'{self.color}  │\033[m Assembly #{" " * 24}{self.assemblycount + 1}/{self.assemblytotal}{self.color}{" " * y}│\033[m')
-                for k,v in args.__dict__.items():
-                    if v:
-                        if k == 'assembly':
-                            v = v.strip(' ').split(',')
-                            v = v[self.assemblycount]
-                            self.assemblycount += 1
-                        elif k == 'left' and not args.right:
-                            k = 'reads'
-                        elif k == 'right' and not args.left:
-                            k = 'reads'
-                        xlen = 74 - len(str(k)) - 40
-                        x = ' ' * xlen
-                        y = 64 - len(str(v)[-30:]) - 25
-                        if len(str(v)) >= 30:
-                            v = f'...{str(v)[-27:]}'
-                        line =  f'{self.color}  │\033[m {k.capitalize()}{x}{str(v)[-30:]}{self.color}{" "*y}│\033[m'
-                        print(line)
-                        
-                print(bottombar)
-                print('')
+            # Supress output
+            if not self.args.quiet:
+                print(f'{self.logo}')
 
-            if args.help:
-                self.logoprint(args.star, args.bowtie2)
-                self.helpoptions()
-                sys.exit()
+            # Settings
+            self.threads = int(self.args.threads) if self.args.threads else self.threads
+            self.quiet   = self.args.quiet
+            self.plot    = self.args.plot
+            self.skip    = self.args.skip
+            self.clutter = self.args.clutter
 
-            elif len(sys.argv) > 2:
+        # Check for required programs
+        def check_requirements(self):
+            star = True if (self.args.star + self.args.bowtie2 + self.args.snap) == 0 else True if self.args.star else False
+            req_check(star, self.args.bowtie2, self.args.snap)
 
-                self.quiet = args.quiet if args.quiet else False
+        # Count assemblies in run
+        def assembly_counter(self):
+            if not self.args.assembly:
+                return
+            assembly = self.args.assembly.split(',')
+            self.assembly_count = len(assembly)
+            if self.assembly_count > 1:
+                self.assembly_multi = True
+            self.assembly_list  = assembly
 
-                transrate_start              = MAIN()
-                transrate_start.TERM         = get_term(self)
-                transrate_start.ASSEMBLYLIST = str(args.assembly).strip(' ').split(',') if args.assembly else ''
-                transrate_start.ASSEMBLYLIST = [x for x in transrate_start.ASSEMBLYLIST if x.strip()]
-                transrate_start.SKIP         = args.skip if args.skip else False
-                self.assemblytotal           = len(transrate_start.ASSEMBLYLIST)
+        # Name first assembly run
+        def assembly_namer(self, assembly):
+            self.assembly_name = os.path.basename(assembly)
+            self.assembly_base = os.path.splitext(self.assembly_name)[0]
+            return self.assembly_base
 
-                if len(transrate_start.ASSEMBLYLIST) > 1:
-                    transrate_start.MULTASSEMBLY = True
-                self.clean                   = transrate_start.__dict__
+        def color_iter(self):
+            self.color = self.term_colors[(self.assembly_run % 3) - 1]
 
-                if args.star + args.bowtie2 + args.snap > 1:
-                    self.logoprint(args.star, args.bowtie2)
-                    self.aligners()
-                    sys.exit()
-
-                for x in transrate_start.ASSEMBLYLIST:
-                    self.color = self.colors[self.colorcount]
-                    transrate_start.__dict__  = self.clean
-                    transrate_start.FINISHED  = False
-                    transrate_start.ASSEMBLY  = x
-                    transrate_start.BASE      = os.path.basename(transrate_start.ASSEMBLY).split('.')[0]
-                    transrate_start.LEFT      = args.left if args.left else ''
-                    transrate_start.RIGHT     = args.right if args.right else ''
-                    transrate_start.REFERENCE = args.reference if args.reference else ''
-                    transrate_start.THREADS   = args.threads if args.threads else 1
-                    transrate_start.OUTDIR    = args.output if args.output else ''
-                    transrate_start.CLUTTER   = args.clutter if args.clutter else False
-                    transrate_start.STAR      = False if any([args.snap, args.bowtie2]) else True
-                    transrate_start.BT2       = args.bowtie2 if args.bowtie2 else False
-                    transrate_start.SNAP      = args.snap if args.snap else False
-                    transrate_start.QUIET     = args.quiet if args.quiet else False
-                    transrate_start.LOGOCOLOR = self.color
-
-                    self.colorcount += 1
-                    if self.colorcount == 3:
-                        self.colorcount = 0
-                    self.logoprint(args.star, args.bowtie2) if self.assemblycount == 0 else None
-                    if self.reqs:
-                        sys.exit()
-                    parameters()
-                    transrate_start.run()
-                    while not transrate_start.FINISHED:
-                        pass
-                    time.sleep(1)
+        # Check for multiple aligners
+        def aligners(self):
+            if self.args.star + self.args.bowtie2 + self.args.snap > 1:
+                print(f'{self.colors["red"]}  ┌{"─" * 27}{self.reset}    Aligner Error   {self.colors["red"]}{"─" * 27}┐{self.reset}')
+                print(f'{self.colors["red"]}  │ {self.reset} Please choose only one aligner to use.{self.colors["red"]}{" " * 34}│{self.reset}')
+                print(f'{self.colors["red"]}  │  •{self.reset} STAR    (-s) is the default aligner.{self.colors["red"]}{" " * 34}│{self.reset}')
+                print(f'{self.colors["red"]}  │  •{self.reset} Snap    (-p){" " * 58}{self.colors["red"]}│{self.reset}')
+                print(f'{self.colors["red"]}  │  •{self.reset} Bowtie2 (-b){" " * 58}{self.colors["red"]}│{self.reset}')
+                print(f'{self.colors["red"]}  │ {self.reset} Or use (--help) for more options.{self.colors["red"]}{" " * 39}│{self.reset}')
+                print(f'{self.colors["red"]}  └{"─" * 74}┘{self.reset}')
+                sys.exit(1)
+            # Set aligner
+            if self.args.bowtie2:
+                self.aligner = 'bowtie2'
+            elif self.args.snap:
+                self.aligner = 'snap'
             else:
-                self.logoprint(args.star, args.bowtie2)
-                self.helpoptions()
-                sys.exit()
+                self.aligner = 'star'
 
-    
-    transrateparser = PARSER()
-    transrateparser.parser()
+        # Check for valid paths
+        def path_check(self):
+            path  = PathCheck(self.assembly_list, self.args.left, self.args.right, self.args.output, self.args.reference, self.args.bam)
+            error = path.check()
+            if error:
+                error = f'...{error[-61:]}' if len(error) > 64 else error
+                print(f'{self.colors["red"]}  ┌{"─" * 29}{self.reset}{"Path Error":^16}{self.colors["red"]}{"─" * 29}┐{self.reset}')
+                print(f'{self.colors["red"]}  │ {self.reset} The following path does not exist:{self.colors["red"]}{" " * 38}│{self.reset}')
+                print(f'{self.colors["red"]}  │ {self.reset} {error}{" " * (72 - len(error))}{self.colors["red"]}│{self.reset}')
+                print(f'{self.colors["red"]}  └{"─" * 74}┘{self.reset}')
+                sys.exit(1)
+            # Check if single, paired, or solo
+            if bool(self.args.left) != bool(self.args.right):
+                self.singleend = True
+                self.single = self.args.left if self.args.left else self.args.right
+            elif bool(self.args.left) + bool(self.args.right) != 0:
+                self.pairedend = True
+            else:
+                self.solo = True
+            # Set output
+            if not self.args.output:
+                self.args.output = os.getcwd()
+                self.output = os.getcwd()
+            else:
+                self.output = self.args.output
 
+        # Check for valid threads
+        def thread_check(self):
+            # Limit threads to available cores
+            self.threads = max(min(self.threads, psutil.cpu_count(logical=True)), 4)    
+
+        def parameter_block(self):
+            assembly = f'...{"".join(self.assembly_name[-61:])}' if len(self.assembly_name) > 64 else self.assembly_name
+            left = ''
+            right = ''
+            reads = ''
+            reference = ''
+            output = ''
+
+            if self.singleend:
+                reads = f'...{"".join(os.path.basename(self.single)[-61:])}' if len(self.single) > 64 else os.path.basename(self.single)
+            elif not self.solo:
+                left = f'...{"".join(os.path.basename(self.args.left)[-61:])}' if len(self.args.left) > 64 else os.path.basename(self.args.left)
+                right = f'...{"".join(self.args.right[-61:])}' if len(self.args.right) > 64 else os.path.basename(self.args.right)
+            if self.args.reference:
+                reference = f'...{"".join(os.path.basename(self.args.reference)[-61:])}' if len(self.args.reference) > 64 else os.path.basename(self.args.reference)
+            output  = f'...{"".join(self.args.output[-61:])}' if len(self.output) > 64 else self.output
+            aligner = self.aligner.capitalize()
+            threads = self.threads
+            plots   = "True" if self.args.plot else None
+            run = f'    ({self.assembly_run}/{self.assembly_count})' if self.assembly_count > 1 else ''
+            clutter = "True" if self.clutter else None
+            param_dict = {
+                'Assembly': assembly + run,
+                'Left': left,
+                'Right': right,
+                'Reads': reads,
+                'Reference': reference,
+                'Output': output,
+                'Aligner': aligner,
+                'Threads': threads,
+                'Plots': plots,
+                'Clutter': clutter
+            }
+            print(f'{self.color}  ┌{"─" * 74}┐{self.reset}')
+            for k,v in param_dict.items():
+                if v:
+                    print(f'{self.color}  │ {self.reset} {k:<10} {v:<61}{self.color}│{self.reset}')
+            print(f'{self.color}  └{"─" * 74}┘{self.reset}')
+
+        def run(self):
+            t2 = MAIN()
+            for i,a in enumerate(self.assembly_list):
+                if i == 0:
+                    self.blank_dct = t2.__dict__.copy()
+                
+                #### Settings ####
+                t2.__dict__       = self.blank_dct.copy()
+                t2.TR_DCT         = {}
+                t2.QUIET          = self.quiet
+                t2.SKIP           = self.skip
+                t2.CLUTTER        = self.clutter
+                t2.THREADS        = self.threads
+                t2.COLOR          = self.color
+                t2.BAM_FILE       = self.bam
+                t2.BAM            = True if self.args.bam else False
+
+                #### Analyses ####
+                # Assembly
+                t2.ASSEMBLY       = a
+                t2.ASSEMBLY_COUNT = self.assembly_count
+                t2.ASSEMBLY_MULTI = self.assembly_multi
+                t2.ASSEMBLY_RUN   = self.assembly_run
+                t2.ASSEMBLY_NAME  = self.assembly_namer(a)
+
+                # Reads
+                t2.LEFT           = self.args.left
+                t2.RIGHT          = self.args.right
+                t2.READMODE       = 1 if self.singleend else 2 if self.pairedend else 0
+                t2.READS          = True if self.singleend or self.pairedend else False
+                
+                # Plotting
+                t2.PLOT           = self.args.plot
+
+                # Reference
+                t2.REFERENCE      = True if self.args.reference else False
+                t2.REFERENCE_FILE = self.args.reference
+
+                # Output
+                t2.OUTPUT         = self.args.output
+
+                # Aligner
+                t2.ALIGNER        = self.aligner
+
+                #### Run ####
+                self.parameter_block() if not self.quiet else None
+                t2.run()
+
+                #### Iterate ####
+                self.assembly_run += 1
+                self.color_iter()
+    term = Parser()
