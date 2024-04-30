@@ -111,8 +111,8 @@ class Stats:
                 'scord_g': ['Avg. sCord',       self.assemblies['sCord_Geometric'].values[0]],
                 'scseg_g': ['Avg. sCseg',       self.assemblies['sCseg_Geometric'].values[0]],
             } if main.READMODE == 2 else {
-                'score_h' : ['Harmonic Score',  self.assemblies['harmonic_score'].values[0]],
-                'score_g' : ['Geometric Score', self.assemblies['geometric_score'].values[0]],
+                # 'score_h' : ['Harmonic Score',  self.assemblies['harmonic_score'].values[0]],
+                # 'score_g' : ['Geometric Score', self.assemblies['geometric_score'].values[0]],
                 'scnuc_h' : ['Avg. sCnuc',      self.assemblies['sCnuc_Harmonic'].values[0]],
                 'sccov_h' : ['Avg. sCcov',      self.assemblies['sCcov_Harmonic'].values[0]],
                 'scnuc_g' : ['Avg. sCnuc',      self.assemblies['sCnuc_Geometric'].values[0]],
