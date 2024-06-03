@@ -1,6 +1,5 @@
 <p align="center">
-<picture><img src="https://i.imgur.com/ksFvFqp.png"
-     alt="TransRate 2.0.5"/><br></picture>
+<picture><img src="https://i.imgur.com/F6rpYpJ.png"/><br></picture>
 Quality analysis for de-novo transcriptome assemblies</p>
 <p align="center"><a href="#"><img alt="GitHub Tag" src="https://img.shields.io/github/v/tag/ericbretz/transrate2?style=flat-square"></a></p>
 
