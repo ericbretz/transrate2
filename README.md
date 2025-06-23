@@ -132,7 +132,7 @@ transrate2/
 └── assembly.csv                     # Combined summary for all assemblies
 ```
 
-<h2><img src="https://i.imgur.com/3iDSqEo.png" width="20" align="top">&ensp;Output Files</h2>
+<h2><img src="https://i.imgur.com/3UA4xwp.png" width="20" align="top">&ensp;Output Files</h2>
 
 - **`<assembly_name>.transrate2.csv`** - Main summary metrics for the assembly
 - **`<assembly_name>.contigs.csv`** - Per-contig metrics
