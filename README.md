@@ -107,7 +107,7 @@ python transrate2.py -h
 2. **Quantification** - Uses Salmon for transcript quantification.
 3. **Contig Metrics** - Calculates a wide range of contig-level and assembly-level metrics (length, GC, N50, coverage, mapping, fragmentation, segmentation, etc.).
 4. **Reference-based Evaluation** (optional) - Uses Diamond to compare assembly to a reference and computes reciprocal best hits and coverage.
-5. **Scoring** - Computes overall and optimal assembly scores, and classifies contigs as "good" or "bad".
+5. **Scoring** - Computes overall and optimal assembly scores.
 6. **Reporting** - Outputs results and summary statistics to the specified directory.
 
 <h2><img src="https://i.imgur.com/3UA4xwp.png" width="20" align="top">&ensp;Output</h2>
