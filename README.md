@@ -108,44 +108,26 @@ python transrate2.py --assembly assembly.fasta --left reads_1.fq --right reads_2
 
 
 
+
 | Option         | Short | Description                                      | Default         |
-
 |----------------|-------|--------------------------------------------------|-----------------|
-
 | `--assembly`   | `-a`  | Assembly file(s), comma separated                | *Required*      |
-
 | `--left`       | `-l`  | Left reads file (FASTQ)                          |                 |
-
 | `--right`      | `-r`  | Right reads file (FASTQ)                         |                 |
-
 | `--reference`  | `-f`  | Reference file (FASTA, optional)                 |                 |
-
 | `--bam`        | `-x`  | BAM file for pre-aligned reads                   |                 |
-
 | `--output-dir` | `-o`  | Output directory                                 | Current dir     |
-
 | `--threads`    | `-t`  | Number of threads                                | `4`             |
-
 | `--hisat2`     | `-s`  | Use Hisat2 aligner (default: Bowtie2)            | `False`         |
-
 | `--bowtie2`    | `-b`  | Use Bowtie2 aligner                              | `True`          |
-
 | `--clutter`    | `-c`  | Remove intermediate files                        | `False`         |
-
 | `--quiet`      | `-q`  | Suppress terminal output                         | `False`         |
-
 | `--debug`      |       | Enable debug mode                               | `False`         |
-
 | `--nocolor`    |       | Disable colored terminal output                  | `False`         |
-
 | `--config`     |       | Path to configuration file                       |                 |
-
 | `--config-create` |    | Create configuration template                    | `config.yaml`   |
-
 | `--config-save`   |    | Save current arguments to config file           | `config.yaml`   |
-
 | `--version`    | `-v`  | Print version                                    |                 |
-
 | `--help`       | `-h`  | Display help message                             |                 |
 
 
