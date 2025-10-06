@@ -23,7 +23,6 @@ https://github.com/blahah/transrate
 
 
 > [!CAUTION]
-
 > $\Huge\textcolor[RGB]{248, 82, 73}{\textsf{TransRate2 is currently under development}}$
 
 
